@@ -1,49 +1,59 @@
 var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
 
-$("#login_btn").click(function (event) {
-
-
-
+$("#login_btn").click(async function(event) {
     var userName = $("#login_email").val();
     var password = $("#login_password").val();
 
-    let isEmailValid =emailPattern.test(userName)
+    let isEmailValid = emailPattern.test(userName);
 
-    if (userName && isEmailValid){
+    if (userName && isEmailValid) {
         let isPasswordValid = passwordPattern.test(password);
 
-
-        if (password && isPasswordValid){
+        if (password && isPasswordValid) {
             var hashPass = hashPassword(password);
 
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:8080/helloShoesPVT/api/v1/auth/signIn",
-                data: JSON.stringify({
-                    email: userName,
-                    password: hashPass
-                }),
-                contentType: "application/json",
-                success: function(response) {
-                    // Handle successful response from the backend
-                    console.log("Login successful");
+            try {
+                const response = await $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8080/helloShoesPVT/api/v1/auth/signIn",
+                    data: JSON.stringify({
+                        email: userName,
+                        password: hashPass
+                    }),
+                    contentType: "application/json"
+                });
 
-                    $('#login_section').fadeOut('slow', function() {
-                        $('#main_dashboard').fadeIn('slow');
-                        $('#sidenav-main').fadeIn('slow');
-                        $('#navbarBlur').fadeIn('slow');
-                    });
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response from the backend
-                    console.error("Login failed:", error);
-                }
+                const tokenString = response.token;
+                const [accessToken, refreshToken] = tokenString.split(':').map(token => token.trim());
+
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
+                $('#login_section').fadeOut('slow', function() {
+                    $('#main_dashboard').fadeIn('slow');
+                    $('#sidenav-main').fadeIn('slow');
+                    $('#navbarBlur').fadeIn('slow');
+                });
+            } catch (error) {
+                console.error("Login failed:", error);
+            }
+        }else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Your Password is invalid!",
             });
         }
+    }else{
+
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Your Email is invalid!",
+        });
+
     }
-
-
 
 });
 
