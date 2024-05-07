@@ -1,4 +1,4 @@
-package software.kasunkavinda.HelloSpringBoot.service.impl;
+package software.kasunkavinda.service.impl;
 
 
 import io.jsonwebtoken.Claims;
@@ -24,8 +24,8 @@ public class JwtServiceImpl implements JwtService {
     private String jwtKey;
 
     @Override
-    public String extractUserName(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractUsername(String token) {
+        return extractClaim(token,Claims::getSubject);
     }
 
     @Override
@@ -35,41 +35,45 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        var username=extractUserName(token);
-        return (username.equals(userDetails.getUsername()) && isTokenExpired(token));
+        var username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
 
     }
-
-
-    //actual process
-    private <T> T extractClaim(String token, Function<Claims,T> claimsResolve){
-        final var allClaims = getAllClaims(token);
-        claimsResolve.apply(allClaims);
-        return  null;
+    // actual process
+    private <T> T extractClaim(String token, Function<Claims,T> claimResolve) {
+        final Claims claims = getAllClaims(token);
+        return claimResolve.apply(claims);
     }
-    private String generateToken(Map<String,Object> extraClaims, UserDetails userDetails){
 
-        extraClaims.put("role",userDetails.getAuthorities());
-
+    private String generateToken(Map<String,Object> extractClaims, UserDetails userDetails){
+        extractClaims.put("role",userDetails.getAuthorities());
         Date now = new Date();
-        Date expire = new Date(now.getTime()+ 1000*600);
+        Date expire = new Date(now.getTime() + 1000 * 600);
+        Date refreshExpire = new Date(now.getTime() + 1000 * 600 * 600);
 
-        String accessToken = Jwts.builder().setClaims(extraClaims)
+
+        String accessToken = Jwts.builder().setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expire)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 
-        return accessToken;
+
+        String refreshToken = Jwts.builder().setClaims(extractClaims)
+                .setSubject(userDetails.getUsername())
+                .setExpiration(refreshExpire)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+
+        return accessToken + " : "+ refreshToken;
+
     }
-    private boolean isTokenExpired(String token){
+    private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-    private Date extractExpiration(String token){
-        return extractClaim(token, Claims::getExpiration);
+    private Date extractExpiration(String token) {
+        return extractClaim(token,Claims::getExpiration);
     }
-
-    private Claims getAllClaims(String token){
+    private Claims getAllClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token)
                 .getBody();
     }
@@ -77,6 +81,5 @@ public class JwtServiceImpl implements JwtService {
         byte[] decode = Decoders.BASE64.decode(jwtKey);
         return Keys.hmacShaKeyFor(decode);
     }
-
 
 }
