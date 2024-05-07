@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "customer")
+
 public class CustomerEntity implements SuperEntity{
 
     @Id
@@ -29,7 +30,11 @@ public class CustomerEntity implements SuperEntity{
     @Enumerated(EnumType.STRING)
     private Level level;
     private int points;
-    private String address;
+    private String building_no;
+    private String lane;
+    private String city;
+    private String state;
+    private String postal_code;
 
     @Column(unique = true)
     private String email;
