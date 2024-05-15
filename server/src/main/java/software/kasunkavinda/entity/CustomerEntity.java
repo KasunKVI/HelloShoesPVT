@@ -24,11 +24,13 @@ public class CustomerEntity implements SuperEntity{
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     private Date joined_date;
     private Date dob;
 
     @Enumerated(EnumType.STRING)
     private Level level;
+
     private int points;
     private String building_no;
     private String lane;
@@ -41,5 +43,7 @@ public class CustomerEntity implements SuperEntity{
 
     @OneToMany(mappedBy = "customer")
     private List<OrderEntity> orders;
+
+
 
 }
