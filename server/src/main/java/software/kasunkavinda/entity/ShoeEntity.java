@@ -28,11 +28,11 @@ public class ShoeEntity implements SuperEntity{
     @ManyToOne
     private SupplierEntity supplier;
 
-    @ManyToMany(mappedBy = "items")
+    @ManyToMany(mappedBy = "shoes")
     private List<BranchEntity> branches;
 
-    @ManyToMany(mappedBy = "items")
-    private List<OrderEntity> orders;
+    @OneToMany(mappedBy = "shoeEntity", cascade = CascadeType.ALL)
+    private List<Orders_Shoes> ordersShoes;
 
 
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import software.kasunkavinda.enums.Role;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,8 +26,12 @@ public class UserEntity implements SuperEntity, UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private String password;
+
+    @OneToOne
+    private EmployeeEntity employee;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

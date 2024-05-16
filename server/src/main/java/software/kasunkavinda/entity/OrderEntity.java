@@ -37,9 +37,9 @@ public class OrderEntity implements SuperEntity {
     @OneToOne
     private RefundEntity refund;
 
-    @ManyToMany(mappedBy = "orders")
-    private List<ShoeEntity> items;
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
+    private List<Orders_Shoes> ordersShoes;
 
-    @ManyToMany(mappedBy = "orders")
-    private List<AccessoriesEntity> accessories;
+    @OneToMany(mappedBy = "orders")
+    private List<Orders_Accessories> accessories;
 }

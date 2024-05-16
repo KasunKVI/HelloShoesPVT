@@ -30,7 +30,7 @@ public class AccessoriesEntity implements SuperEntity{
     @ManyToMany(mappedBy = "accessories")
     private List<BranchEntity> branches;
 
-    @ManyToMany(mappedBy = "accessories")
-    private List<OrderEntity> orders;
+    @OneToMany(mappedBy = "accessoriesEntity", cascade = CascadeType.ALL)
+    private List<Orders_Accessories> ordersAccessories;
 
 }
