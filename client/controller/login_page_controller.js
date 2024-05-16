@@ -42,7 +42,7 @@ $("#login_btn").click(async function(event) {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "Your Password is invalid!",
+                text: "Your Password or Email is invalid!",
             });
         }
     }else{
@@ -50,7 +50,7 @@ $("#login_btn").click(async function(event) {
         Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Your Email is invalid!",
+            text: "Your Password or Email is invalid!",
         });
 
     }
