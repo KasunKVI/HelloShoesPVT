@@ -21,13 +21,23 @@ public class CustomerServiceImpl implements CustomerService {
     private final Mapping mapper;
 
     @Override
-    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
-        return mapper.toCustomerDTO(customerRepo.save(mapper.toCustomerEntity(customerDTO)));
+    public String saveCustomer(CustomerDTO customerDTO) {
+        boolean opt = customerRepo.existsById(customerDTO.getCustomer_id());
+        boolean emailExists = customerRepo.existsByEmail(customerDTO.getEmail());
+        if (opt) {
+            return "Customer already exists";
+        }else if (emailExists) {
+            return "Email already exists";
+        }else {
+            mapper.toCustomerDTO(customerRepo.save(mapper.toCustomerEntity(customerDTO)));
+            return "Customer saved successfully";
+        }
+
     }
 
     @Override
     public void deleteCustomer(String customerId) {
-         customerRepo.deleteById(customerId);
+        customerRepo.deleteById(customerId);
     }
 
     @Override
@@ -41,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer( CustomerDTO customerDTO) {
+    public void updateCustomer(CustomerDTO customerDTO) {
         customerRepo.save(mapper.toCustomerEntity(customerDTO));
     }
 }

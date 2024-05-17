@@ -6,4 +6,5 @@ import software.kasunkavinda.entity.CustomerEntity;
 
 @Repository
 public interface CustomerRepo extends JpaRepository<CustomerEntity,String> {
+    boolean existsByEmail(String email);
 }

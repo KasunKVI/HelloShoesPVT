@@ -1,65 +1,188 @@
+var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+var nicPattern = /^(?:\d{9}[Vv]|\d{12})$/;
+var namePattern = /^[a-zA-Z\s'-]+$/;
+var postalCodePattern = /^[0-9]{5}$/;
+
 
 var points;
 var level;
 var joindate;
 
-$("#customer_add_btn").click(async function (event) {
 
-    // Retrieve the access token from localStorage
+
+function validateField(field, pattern) {
+    if (!pattern.test(field.val().trim())) {
+        field.removeClass('valid').addClass('invalid');
+        return false;
+    } else {
+        field.removeClass('invalid').addClass('valid');
+        return true;
+    }
+}
+
+function validateNotEmpty(field) {
+    if (!field.val().trim()) {
+        field.removeClass('valid').addClass('invalid');
+        return false;
+    } else {
+        field.removeClass('invalid').addClass('valid');
+        return true;
+    }
+}
+function validateForm() {
+    let isValid = true;
+
+    isValid &= validateField($('#customer_nic_add'), nicPattern);
+    isValid &= validateField($('#customer_email_add'), emailPattern);
+    isValid &= validateField($('#customer_name_add'), namePattern);
+    isValid &= validateNotEmpty($('#customer_address_add_building'));
+    isValid &= validateNotEmpty($('#customer_address_add_lane'));
+    isValid &= validateField($('#customer_address_add_postal_code'), postalCodePattern);
+    isValid &= validateNotEmpty($('#customer_dob_add'));
+    isValid &= validateNotEmpty($('#customer_gender_add'));
+
+    // Show custom alert if the form is invalid
+    if (!isValid) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please correct the highlighted fields'
+        });
+    }
+
+    return isValid;
+}
+
+// Add event listeners to validate fields in real-time
+$('#customer_nic_add').on('input', function() {
+    validateField($(this), nicPattern);
+});
+
+$('#customer_email_add').on('input', function() {
+    validateField($(this), emailPattern);
+});
+
+$('#customer_name_add').on('input', function() {
+    validateField($(this), namePattern);
+});
+
+$('#customer_address_add_building').on('input', function() {
+    validateNotEmpty($(this));
+});
+
+$('#customer_address_add_lane').on('input', function() {
+    validateNotEmpty($(this));
+});
+
+$('#customer_address_add_postal_code').on('input', function() {
+    validateField($(this), postalCodePattern);
+});
+
+$('#customer_dob_add').on('input', function() {
+    validateNotEmpty($(this));
+});
+
+$('#customer_gender_add').on('input', function() {
+    validateNotEmpty($(this));
+});
+
+$('#customer_add_btn').click(function() {
+    if (validateForm()) {
+        const customer = new CustomerDTO(
+            $('#customer_nic_add').val().trim(),
+            $('#customer_name_add').val().trim(),
+            $('#customer_gender_add').val(),
+            new Date().toISOString().split('T')[0],
+            $('#customer_dob_add').val().trim(),
+            "NEW",
+            0,
+            $('#customer_address_add_building').val().trim(),
+            $('#customer_address_add_lane').val().trim(),
+            $('#customer_address_add_city').val().trim(),
+            $('#customer_address_add_state').val().trim(),
+            $('#customer_address_add_postal_code').val().trim(),
+            $('#customer_email_add').val().trim(),
+
+        );
+
+        console.log(customer)
+        submitForm(customer);
+    }
+});
+
+async function submitForm(customer) {
+
     const accessToken = localStorage.getItem('accessToken');
-
-    var nic = $("#customer_nic_add").val();
-    var email = $("#customer_email_add").val();
-    var name = $("#customer_name_add").val();
-    var building_no = $("#customer_address_add_building").val();
-    var lane = $("#customer_address_add_lane").val();
-    var state = $("#customer_address_add_state").val();
-    var city = $("#customer_address_add_city").val();
-    var postal_code = $("#customer_address_add_postal_code").val();
-    var dob = $("#customer_dob_add").val();
-    var gender = $("#customer_gender_add").val();
-    var joindate = new Date().toISOString().split('T')[0];
-    var level = "NEW";
-    var points = 0;
 
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "http://localhost:8080/helloShoesPVT/api/v1/customer",
+            url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
             headers: {
                 "Authorization": "Bearer " + accessToken
             },
-            data: JSON.stringify({
-                customer_id: nic,
-                name: name,
-                gender: gender,
-                joined_date: joindate,
-                dob: dob,
-                level: level,
-                points: points,
-                building_no: building_no,
-                lane: lane,
-                city: city,
-                state: state,
-                postal_code:postal_code,
-                email: email
-            }),
+            data: JSON.stringify(customer),
             contentType: "application/json"
         });
-        Swal.fire({
-            icon: "success",
-            title: "Customer has been saved",
-            showConfirmButton: false,
-            timer: 1500
-        });
 
-        loadCustomers();
-        clearAddForm();
+        // Assuming the response has a 'message' property
+        if (response.message === "Customer saved successfully") {
+            // Show a success message
+            Swal.fire({
+                icon: "success",
+                title: response.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            loadCustomers();
+            clearAddForm();
 
+        }else {
+            Swal.fire({
+                icon: "error",
+                title: response.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
     } catch (error) {
         console.error("Request failed:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: error.responseJSON ? error.responseJSON.message : "Something went wrong. Please try again."
+        });
     }
-});
+
+    // const response = await $.ajax({
+    //     type: "POST",
+    //     url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
+    //     headers: {
+    //         "Authorization": "Bearer " + accessToken
+    //     },
+    //     data: JSON.stringify(customer),
+    //     contentType: "application/json",
+    //     success: function () {
+    //         Swal.fire({
+    //             icon: "success",
+    //             // title: response.message,
+    //             showConfirmButton: false,
+    //             timer: 1500
+    //         });
+    //         loadCustomers();
+    //         clearAddForm();
+    //     },
+    //     error: function (error) {
+    //         console.error("Request failed:", error);
+    //         Swal.fire({
+    //             icon: "error",
+    //             title: "Oops...",
+    //             text: "Something Wrong!.. Please try again.",
+    //         });
+    //     }
+    // });
+}
+
 
 async function searchCustomer(customerId) {
 
@@ -417,3 +540,13 @@ $('#search_input').keypress(function (e) {
     }
 });
 
+// Function to show custom alert
+function showCustomAlert(message) {
+    document.getElementById('customAlertMessage').innerText = message;
+    document.getElementById('customAlert').style.display = 'block';
+}
+
+// Function to close custom alert
+function closeCustomAlert() {
+    document.getElementById('customAlert').style.display = 'none';
+}
