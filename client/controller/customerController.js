@@ -292,7 +292,7 @@ async function searchCustomer(customerId) {
     }
 };
 
-function validateUpdateForm() {
+function validateCustomerUpdateForm() {
 
     let isValid = true;
 
@@ -319,7 +319,7 @@ function validateUpdateForm() {
 
 $("#customer_btn_update").click(async function (event) {
 
-    if (validateUpdateForm()) {
+    if (validateCustomerUpdateForm()) {
         const customer = new CustomerDTO(
             $('#customer_nic_update').val().trim(),
             $('#customer_name_update').val().trim(),
@@ -343,36 +343,37 @@ $("#customer_btn_update").click(async function (event) {
 });
 
 // Define the clear update form function
-function clearUpdateForm() {
-    // Clear the input fields in the update form
-    $("#customer_nic_update").val("");
-    $("#customer_name_update").val("");
-    $("#customer_email_update").val("");
-    $("#customer_building_no_update").val("");
-    $("#customer_lane_update").val("");
-    $("#customer_city_update").val("");
-    $("#customer_state_update").val("");
-    $("#customer_postcode_update").val("");
-    $("#customer_dob_update").val("");
+function clearCustomerUpdateForm() {
+    $(".btn-close").click();
 
 }
 
-$("#customer_btn_clear").click(function() {
+$("#customer_btn_clear_add").click(function() {
     // Call the clear update form function
-    clearUpdateForm();
+    clearCustomerAddForm();
 });
 
 function clearCustomerAddForm() {
 
     // Clear the input fields in the add form
-    $(".btn-close").click();
+    $('#customer_nic_add').val('');
+    $('#customer_name_add').val('');
+    $('#customer_email_add').val('');
+    $('#customer_address_add_building').val('');
+    $('#customer_address_add_lane').val('');
+    $('#customer_address_add_city').val('');
+    $('#customer_address_add_state').val('');
+    $('#customer_address_add_postal_code').val('');
+    $('#customer_dob_add').val('');
+    $('#customer_gender_add').val('');
+
 
 
 }
 
 // Attach the clearAddForm function to the Clear button click event
 $("#customer_btn_close_update").click(function() {
-    clearAddForm();
+    clearCustomerUpdateForm();
 });
 
 $("#customers_link").click(function(event) {
