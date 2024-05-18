@@ -26,7 +26,7 @@ public class Customer {
         return "Customer Health Good";
     }
 
-    @PostMapping()
+    @PostMapping("/save")
     public ResponseEntity saveCustomer(@RequestBody CustomerDTO customerDTO){
         String opt = customerService.saveCustomer(customerDTO);
         if (opt.equals("Customer already exists")){

@@ -29,7 +29,7 @@ function validateNotEmpty(field) {
         return true;
     }
 }
-function validateForm() {
+function validateCustomerForm() {
     let isValid = true;
 
     isValid &= validateField($('#customer_nic_add'), nicPattern);
@@ -114,7 +114,7 @@ $('#customer_gender_update').on('input', function() {
 });
 
 $('#customer_add_btn').click(function() {
-    if (validateForm()) {
+    if (validateCustomerForm()) {
         const customer = new CustomerDTO(
             $('#customer_nic_add').val().trim(),
             $('#customer_name_add').val().trim(),
@@ -141,13 +141,13 @@ $('#customer_add_btn').click(function() {
         }
 
 
-        submitForm(customer,"Save");
+        submitCustomerForm(customer,"Save");
 
 
     }
 });
 
-async function submitForm(customer, type) {
+async function submitCustomerForm(customer, type) {
 
     const accessToken = localStorage.getItem('accessToken');
 
@@ -155,7 +155,7 @@ async function submitForm(customer, type) {
         try {
             const response = await $.ajax({
                 type: "POST",
-                url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
+                url: "http://localhost:8081/helloShoesPVT/api/v1/customer/save",
                 headers: {
                     "Authorization": "Bearer " + accessToken
                 },
@@ -173,7 +173,7 @@ async function submitForm(customer, type) {
                     timer: 1500
                 });
                 loadCustomers();
-                clearAddForm();
+                clearCustomerAddForm();
 
             }else {
                 Swal.fire({
@@ -337,7 +337,7 @@ $("#customer_btn_update").click(async function (event) {
 
         );
 
-        submitForm(customer,"Update");
+        submitCustomerForm(customer,"Update");
     }
 
 });
@@ -362,9 +362,11 @@ $("#customer_btn_clear").click(function() {
     clearUpdateForm();
 });
 
-function clearAddForm() {
+function clearCustomerAddForm() {
+
     // Clear the input fields in the add form
     $(".btn-close").click();
+
 
 }
 
