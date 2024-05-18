@@ -211,7 +211,7 @@ async function submitForm(customer, type) {
                     timer: 1500
                 });
                 loadCustomers();
-                await searchCustomer(nic);
+                await searchCustomer(customer.customer_id);
             }else {
                 Swal.fire({
                     icon: "error",
@@ -227,7 +227,7 @@ async function submitForm(customer, type) {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: error.responseJSON ? error.responseJSON.message : "Something went wrong. Please try again."
+                text: error.responseJSON ? error.responseJSON.message : "You have no access to Update this Customer"
             });
         }
     }
@@ -344,13 +344,16 @@ $("#customer_btn_update").click(async function (event) {
 
 // Define the clear update form function
 function clearUpdateForm() {
-    // Clear the input values of all form fields
+    // Clear the input fields in the update form
     $("#customer_nic_update").val("");
     $("#customer_name_update").val("");
     $("#customer_email_update").val("");
-    $("#customer_address_update").val("");
+    $("#customer_building_no_update").val("");
+    $("#customer_lane_update").val("");
+    $("#customer_city_update").val("");
+    $("#customer_state_update").val("");
+    $("#customer_postcode_update").val("");
     $("#customer_dob_update").val("");
-    $("#customer_gender_update").val(""); // Assuming this should be reset to the default value
 
 }
 
@@ -361,21 +364,12 @@ $("#customer_btn_clear").click(function() {
 
 function clearAddForm() {
     // Clear the input fields in the add form
-    $("#customer_nic_add").val("");
-    $("#customer_name_add").val("");
-    $("#customer_email_add").val("");
-    $("#customer_address_add_building").val("");
-    $("#customer_address_add_lane").val("");
-    $("#customer_address_add_state").val("");
-    $("#customer_address_add_city").val("");
-    $("#customer_address_add_postal_code").val("");
-    $("#customer_dob_add").val("");
-    $("#customer_gender_add").val("MALE"); // Assuming Male is the default gender option
+    $(".btn-close").click();
 
 }
 
 // Attach the clearAddForm function to the Clear button click event
-$("#customer_btn_clear_add").click(function() {
+$("#customer_btn_close_update").click(function() {
     clearAddForm();
 });
 
@@ -391,7 +385,7 @@ const loadCustomers = () => {
 
     $.ajax({
             type:"GET",
-            url: "http://localhost:8080/helloShoesPVT/api/v1/customer",
+            url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
             headers: {
                 "Authorization": "Bearer " + accessToken
             },
@@ -469,7 +463,6 @@ const attachEventListeners = () => {
 
         const customerId = $(this).data('customer-id');
 
-        console.log(customerId)
         // Change the modal title to "Update Customer"
         $("#popupModalLabelCustomerUpdate").text("Update Customer");
 
@@ -513,7 +506,7 @@ const attachEventListeners = () => {
                 try {
                     const response = await $.ajax({
                         type: "DELETE",
-                        url: "http://localhost:8080/helloShoesPVT/api/v1/customer/" + customerId,
+                        url: "http://localhost:8081/helloShoesPVT/api/v1/customer/" + customerId,
                         headers: {
                             "Authorization": "Bearer " + accessToken
                         },
@@ -534,13 +527,12 @@ const attachEventListeners = () => {
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: "Customer not found!",
+                        text: "You have no access to Delete this Customer!",
                     });
                 }
 
 
             } else if (
-                /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
             ) {
                 swalWithBootstrapButtons.fire({

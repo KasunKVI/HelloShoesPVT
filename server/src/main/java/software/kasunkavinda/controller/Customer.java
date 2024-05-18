@@ -54,18 +54,18 @@ public class Customer {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCustomer(@PathVariable String id){
         customerService.deleteCustomer(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<CustomerDTO> getAllCustomers() {
-        System.out.println("Fetching all customers");
         return customerService.getAllCustomers();
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateCustomer(@RequestBody CustomerDTO customerDTO) {
         String resp = customerService.updateCustomer(customerDTO);
         if (resp.equals("Email already exists")) {
