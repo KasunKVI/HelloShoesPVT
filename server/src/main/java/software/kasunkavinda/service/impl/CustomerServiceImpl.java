@@ -51,7 +51,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer(CustomerDTO customerDTO) {
-        customerRepo.save(mapper.toCustomerEntity(customerDTO));
+    public String updateCustomer(CustomerDTO customerDTO) {
+        boolean emailExists = customerRepo.existsByEmail(customerDTO.getEmail());
+        if (emailExists) {
+            return "Email already exists";
+        }else {
+            customerRepo.save(mapper.toCustomerEntity(customerDTO));
+            return "Customer updated successfully";
+        }
     }
 }

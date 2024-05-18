@@ -86,6 +86,33 @@ $('#customer_gender_add').on('input', function() {
     validateNotEmpty($(this));
 });
 
+//////
+
+$('#customer_nic_update').on('input', function() {
+    validateField($(this), nicPattern);
+});
+$('#customer_name_update').on('input', function() {
+    validateField($(this), namePattern);
+});
+$('#customer_email_update').on('input', function() {
+    validateField($(this), emailPattern);
+});
+$('#customer_building_no_update').on('input', function() {
+    validateNotEmpty($(this));
+});
+$('#customer_postcode_update').on('input', function() {
+    validateField($(this),postalCodePattern);
+});
+$('#customer_lane_update').on('input', function() {
+    validateNotEmpty($(this));
+});
+$('#customer_dob_update').on('input', function() {
+    validateNotEmpty($(this));
+});
+$('#customer_gender_update').on('input', function() {
+    validateNotEmpty($(this));
+});
+
 $('#customer_add_btn').click(function() {
     if (validateForm()) {
         const customer = new CustomerDTO(
@@ -105,82 +132,106 @@ $('#customer_add_btn').click(function() {
 
         );
 
-        console.log(customer)
-        submitForm(customer);
+        // Check and set empty string if city and state are null or undefined
+        if (!customer.city) {
+            customer.city = "";
+        }
+        if (!customer.state) {
+            customer.state = "";
+        }
+
+
+        submitForm(customer,"Save");
+
+
     }
 });
 
-async function submitForm(customer) {
+async function submitForm(customer, type) {
 
     const accessToken = localStorage.getItem('accessToken');
 
-    try {
-        const response = await $.ajax({
-            type: "POST",
-            url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
-            headers: {
-                "Authorization": "Bearer " + accessToken
-            },
-            data: JSON.stringify(customer),
-            contentType: "application/json"
-        });
-
-        // Assuming the response has a 'message' property
-        if (response.message === "Customer saved successfully") {
-            // Show a success message
-            Swal.fire({
-                icon: "success",
-                title: response.message,
-                showConfirmButton: false,
-                timer: 1500
+    if (type === "Save") {
+        try {
+            const response = await $.ajax({
+                type: "POST",
+                url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
+                headers: {
+                    "Authorization": "Bearer " + accessToken
+                },
+                data: JSON.stringify(customer),
+                contentType: "application/json"
             });
-            loadCustomers();
-            clearAddForm();
 
-        }else {
+            // Assuming the response has a 'message' property
+            if (response.message === "Customer saved successfully") {
+                // Show a success message
+                Swal.fire({
+                    icon: "success",
+                    title: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                loadCustomers();
+                clearAddForm();
+
+            }else {
+                Swal.fire({
+                    icon: "error",
+                    title: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        } catch (error) {
+            console.error("Request failed:", error);
             Swal.fire({
                 icon: "error",
-                title: response.message,
-                showConfirmButton: false,
-                timer: 1500
+                title: "Oops...",
+                text: error.responseJSON ? error.responseJSON.message : "Something went wrong. Please try again."
             });
         }
-    } catch (error) {
-        console.error("Request failed:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: error.responseJSON ? error.responseJSON.message : "Something went wrong. Please try again."
-        });
+    }else {
+        try {
+            const response = await $.ajax({
+                type: "PUT",
+                url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
+                headers: {
+                    "Authorization": "Bearer " + accessToken
+                },
+                data: JSON.stringify(customer),
+                contentType: "application/json"
+            });
+
+            if (response.message === "Customer updated successfully") {
+                Swal.fire({
+                    icon: "success",
+                    title: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                loadCustomers();
+                await searchCustomer(nic);
+            }else {
+                Swal.fire({
+                    icon: "error",
+                    title: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+            }
+
+        } catch (error) {
+            console.error("Request failed:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: error.responseJSON ? error.responseJSON.message : "Something went wrong. Please try again."
+            });
+        }
     }
 
-    // const response = await $.ajax({
-    //     type: "POST",
-    //     url: "http://localhost:8081/helloShoesPVT/api/v1/customer",
-    //     headers: {
-    //         "Authorization": "Bearer " + accessToken
-    //     },
-    //     data: JSON.stringify(customer),
-    //     contentType: "application/json",
-    //     success: function () {
-    //         Swal.fire({
-    //             icon: "success",
-    //             // title: response.message,
-    //             showConfirmButton: false,
-    //             timer: 1500
-    //         });
-    //         loadCustomers();
-    //         clearAddForm();
-    //     },
-    //     error: function (error) {
-    //         console.error("Request failed:", error);
-    //         Swal.fire({
-    //             icon: "error",
-    //             title: "Oops...",
-    //             text: "Something Wrong!.. Please try again.",
-    //         });
-    //     }
-    // });
 }
 
 
@@ -192,7 +243,7 @@ async function searchCustomer(customerId) {
     try {
         const response = await $.ajax({
             type: "GET",
-            url: "http://localhost:8080/helloShoesPVT/api/v1/customer/" + customerId,
+            url: "http://localhost:8081/helloShoesPVT/api/v1/customer/" + customerId,
             headers: {
                 "Authorization": "Bearer " + accessToken
             },
@@ -224,7 +275,6 @@ async function searchCustomer(customerId) {
 
         var updateButtonText = document.getElementById("customer_btn_update").textContent;
 
-
             // Display the customer details section
             $("#customer_details_section").show();
 
@@ -241,58 +291,54 @@ async function searchCustomer(customerId) {
         $("#customer_details_section").hide();
     }
 };
+
+function validateUpdateForm() {
+
+    let isValid = true;
+
+    isValid &= validateField($('#customer_nic_update'), nicPattern);
+    isValid &= validateField($('#customer_email_update'), emailPattern);
+    isValid &= validateField($('#customer_name_update'), namePattern);
+    isValid &= validateNotEmpty($('#customer_building_no_update'));
+    isValid &= validateNotEmpty($('#customer_lane_update'));
+    isValid &= validateField($('#customer_postcode_update'), postalCodePattern);
+    isValid &= validateNotEmpty($('#customer_dob_update'));
+    isValid &= validateNotEmpty($('#customer_gender_update'));
+
+    // Show custom alert if the form is invalid
+    if (!isValid) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please correct the highlighted fields'
+        });
+    }
+
+    return isValid;
+}
+
 $("#customer_btn_update").click(async function (event) {
 
-    // Retrieve the access token from localStorage
-    const accessToken = localStorage.getItem('accessToken');
+    if (validateUpdateForm()) {
+        const customer = new CustomerDTO(
+            $('#customer_nic_update').val().trim(),
+            $('#customer_name_update').val().trim(),
+            $('#customer_gender_update').val(),
+            joindate,
+            $('#customer_dob_update').val().trim(),
+            level,
+            points,
+            $('#customer_building_no_update').val().trim(),
+            $('#customer_lane_update').val().trim(),
+            $('#customer_city_update').val().trim(),
+            $('#customer_state_update').val().trim(),
+            $('#customer_postcode_update').val().trim(),
+            $('#customer_email_update').val().trim(),
 
-        var nic = $("#customer_nic_update").val();
-        var email = $("#customer_email_update").val();
-        var name = $("#customer_name_update").val();
-        var bulding_no = $("#customer_building_no_update").val();
-        var lane = $("#customer_lane_update").val();
-        var city = $("#customer_city_update").val();
-        var state = $("#customer_state_update").val();
-        var postalCode = $("#customer_postcode_update").val();
-        var dob = $("#customer_dob_update").val();
-        var gender = $("#customer_gender_update").val();
+        );
 
-
-        try {
-            const response = await $.ajax({
-                type: "PUT",
-                url: "http://localhost:8080/helloShoesPVT/api/v1/customer",
-                headers: {
-                    "Authorization": "Bearer " + accessToken
-                },
-                data: JSON.stringify({
-                    customer_id: nic,
-                    name: name,
-                    gender: gender,
-                    joined_date: joindate,
-                    dob: dob,
-                    level: level,
-                    points: points,
-                    building_no:bulding_no,
-                    lane:lane,
-                    city:city,
-                    state:state,
-                    postal_code:postalCode,
-                    email: email
-                }),
-                contentType: "application/json"
-            });
-            Swal.fire({
-                icon: "success",
-                title: "Customer has been updated",
-                showConfirmButton: false,
-                timer: 1500
-            });
-            loadCustomers();
-            await searchCustomer(nic);
-        } catch (error) {
-            console.error("Request failed:", error);
-        }
+        submitForm(customer,"Update");
+    }
 
 });
 
@@ -364,7 +410,7 @@ const loadCustomers = () => {
                     const dobDate = new Date(customer.dob);
                     const formattedDobDate = `${dobDate.getFullYear()}-${dobDate.getMonth() + 1}-${dobDate.getDate()}`;
 
-                    let tbl_row = `<tr><td class="customer_id"><p>${customer.customer_id}</p></td><td class="customer_name"><p class="text-xs font-weight-bold mb-0">${customer.name}</p></td><td class="customer_contact_no"><p class="text-center  mb-0">${customer.gender}</p></td><td class="customer_dob"><p class="text-center  mb-0">${formattedJoinedDate}</p></td><td class="customer_email align-middle text-center text-sm"><span>${formattedDobDate}</span></td><td class="customer_gender align-middle text-center"><span class="badge badge-sm bg-gradient-success">${customer.level}</span></td><td class="customer_address"><p class="text-center  mb-0">${customer.points}</p></td><td class="customer_address"><p class="text-center  mb-0">${customer.building_no+ ", " + customer.lane + ", " + customer.city + ", " + customer.state + ", " + customer.postal_code}</p></td><<td class="customer_email"><p class="text-center  mb-0">${customer.email}</p></td>
+                    let tbl_row = `<tr data-customer-id=${customer.customer_id}> <td class="customer_id"><p>${customer.customer_id}</p></td><td class="customer_name"><p class="text-xs font-weight-bold mb-0">${customer.name}</p></td><td class="customer_contact_no"><p class="text-center  mb-0">${customer.gender}</p></td><td class="customer_dob"><p class="text-center  mb-0">${formattedJoinedDate}</p></td><td class="customer_email align-middle text-center text-sm"><span>${formattedDobDate}</span></td><td class="customer_gender align-middle text-center"><span class="badge badge-sm bg-gradient-success">${customer.level}</span></td><td class="customer_address"><p class="text-center  mb-0">${customer.points}</p></td><td class="customer_address"><p class="text-center  mb-0">${customer.building_no+ ", " + customer.lane + ", " + customer.city + ", " + customer.state + ", " + customer.postal_code}</p></td><<td class="customer_email"><p class="text-center  mb-0">${customer.email}</p></td>
             <td class="align-middle white-space-nowrap text-end pe-0">
             <div class="btn-reveal-trigger position-static align-middle" >
             <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
@@ -516,22 +562,20 @@ function scrollToElement(element) {
 
 // Function to handle search action
 function handleSearch() {
-    const customerId = $('#search_input').val()
+    const customerId = $('#search_input').val().trim(); // Trim whitespace from input
 
-    $('#customer_table_body tr').removeClass('highlighted');
+    $('#customer_table_body tr').removeClass('highlighted'); // Remove highlight from previous search results
 
     const row = $(`#customer_table_body tr[data-customer-id="${customerId}"]`);
 
-    console.log(row);
-    // if (row.length > 0) {
+    if (row.length > 0) {
         // Highlight the found row
         row.addClass('highlighted');
         scrollToElement(row[0]);
-    // } else {
-    //     alert('Customer ID not found');
-    // }
+    } else {
+        alert('Customer ID not found');
+    }
 }
-
 
 // Event listener for Enter key press on the input field
 $('#search_input').keypress(function (e) {
@@ -540,13 +584,3 @@ $('#search_input').keypress(function (e) {
     }
 });
 
-// Function to show custom alert
-function showCustomAlert(message) {
-    document.getElementById('customAlertMessage').innerText = message;
-    document.getElementById('customAlert').style.display = 'block';
-}
-
-// Function to close custom alert
-function closeCustomAlert() {
-    document.getElementById('customAlert').style.display = 'none';
-}

@@ -66,7 +66,18 @@ public class Customer {
     }
 
     @PutMapping
-    public void updateCustomer(@RequestBody CustomerDTO customerDTO){
-        customerService.updateCustomer(customerDTO);
+    public ResponseEntity updateCustomer(@RequestBody CustomerDTO customerDTO) {
+        String resp = customerService.updateCustomer(customerDTO);
+        if (resp.equals("Email already exists")) {
+            responseDTO.setCode("400");
+            responseDTO.setMessage("Email already exists");
+            responseDTO.setContent(customerDTO);
+            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+        } else {
+            responseDTO.setCode("200");
+            responseDTO.setMessage("Customer updated successfully");
+            responseDTO.setContent(customerDTO);
+            return new ResponseEntity(responseDTO, HttpStatus.OK);
+        }
     }
 }
