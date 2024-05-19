@@ -41,8 +41,6 @@ public class EmployeeDTO {
 
     private String contact;
 
-    private String role;
-
     private String emergency_contact;
     private Date joined_date;
     private Date dob;

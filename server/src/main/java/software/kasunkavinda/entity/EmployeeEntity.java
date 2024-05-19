@@ -20,14 +20,25 @@ public class EmployeeEntity implements SuperEntity {
     @Id
     private String employee_id;
     private String name;
+    @Column(columnDefinition = "LONGTEXT")
     private String profile_pic;
+
+    @Enumerated(EnumType.STRING)
     private Gender gender;
-    private String address;
+
+    private String building_no;
+    private String lane;
+    private String city;
+    private String state;
+    private String postal_code;
     private String status;
+
+    @Column(unique = true)
     private String email;
     private String designation;
+
     private String contact;
-    private Role role;
+
     private String emergency_contact;
     private Date joined_date;
     private Date dob;
