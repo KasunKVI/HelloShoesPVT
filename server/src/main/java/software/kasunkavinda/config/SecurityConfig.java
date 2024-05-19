@@ -32,6 +32,7 @@ import software.kasunkavinda.service.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig  {
 
+
     private final UserService userService;
     private final JWTConfigurationFilter jwtConfigurationFilter;
 
