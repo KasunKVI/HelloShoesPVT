@@ -30,6 +30,7 @@ public class Employee {
     }
 
     @PostMapping("/save")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity saveEmployee(@RequestBody EmployeeDTO employeeDTO){
 
         System.out.println(employeeDTO);
