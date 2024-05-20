@@ -28,6 +28,7 @@ public class UserEntity implements SuperEntity, UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
     private String password;
 
     @OneToOne
