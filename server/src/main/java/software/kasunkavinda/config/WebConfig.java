@@ -17,13 +17,15 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:63342")
-                        .allowedMethods(HttpMethod.GET.name(),
+                        .allowedMethods(
+                                HttpMethod.GET.name(),
                                 HttpMethod.POST.name(),
                                 HttpMethod.PUT.name(),
                                 HttpMethod.DELETE.name())
-                        .allowedHeaders(HttpHeaders.CONTENT_TYPE,
-                                HttpHeaders.AUTHORIZATION);
-
+                        .allowedHeaders(
+                                HttpHeaders.CONTENT_TYPE,
+                                HttpHeaders.AUTHORIZATION)
+                        .allowCredentials(true);
             }
         };
     }
