@@ -1,3 +1,9 @@
 .idea
 # Project exclude paths
 /server/target/
+server/src/main/resources/application.properties
+.$Hello_Shoes.drawio.bkp
+client.iml
+Hello_Shoes.drawio
+HelloShoesPVT.iml
+server.iml
