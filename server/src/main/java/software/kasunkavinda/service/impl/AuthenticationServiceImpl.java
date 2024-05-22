@@ -7,8 +7,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.kasunkavinda.dao.EmployeeRepo;
 import software.kasunkavinda.dao.UserRepo;
 import software.kasunkavinda.dto.UserDTO;
+import software.kasunkavinda.entity.EmployeeEntity;
 import software.kasunkavinda.entity.UserEntity;
 import software.kasunkavinda.reqAndresp.response.JwtAuthResponse;
 import software.kasunkavinda.reqAndresp.secure.SignIn;
@@ -26,6 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepo userRepo;
     private final JwtService jwtService;
+    private final EmployeeRepo employeeRepo;
 
 
     private final PasswordEncoder passwordEncoder;
@@ -44,16 +47,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public JwtAuthResponse signUp(SignUp signUp) {
 
-        System.out.println(signUp.getId());
-        var buildUser = UserDTO.builder()
-                .id(UUID.randomUUID().toString())
-                .email(signUp.getEmail())
-                .password(passwordEncoder.encode(signUp.getPassword()))
-                .role(signUp.getRole())
-                .build();
-        var savedUser = userRepo.save(mapper.toUserEntity(buildUser));
-        var genToken = jwtService.generateToken(savedUser);
-        return JwtAuthResponse.builder().token(genToken).build();
+         boolean opt = userRepo.existsByEmail(signUp.getEmail());
+
+            if (opt) {
+                return JwtAuthResponse.builder().token("User already exists").build();
+            }else {
+
+                EmployeeEntity employeeEntity = employeeRepo.getReferenceById(signUp.getId());
+                var buildUser = UserDTO.builder()
+                        .id(UUID.randomUUID().toString())
+                        .email(signUp.getEmail())
+                        .password(passwordEncoder.encode(signUp.getPassword()))
+                        .role(signUp.getRole())
+                        .employeeDTO(mapper.toEmployeeDTO(employeeEntity))
+                        .build();
+                var savedUser = userRepo.save(mapper.toUserEntity(buildUser));
+                var genToken = jwtService.generateToken(savedUser);
+                return JwtAuthResponse.builder().token(genToken).build();
+            }
     }
 
     @Override
