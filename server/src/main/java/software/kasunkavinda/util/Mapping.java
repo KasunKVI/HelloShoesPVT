@@ -21,7 +21,7 @@ public class Mapping {
         return  mapper.map(userEntity, UserDTO.class);
     }
 
-    public CustomerEntity tuCustomerEntity(CustomerDTO customerDTO) {
+    public CustomerEntity toCustomerEntity(CustomerDTO customerDTO) {
         return mapper.map(customerDTO, CustomerEntity.class);
     }
     public CustomerDTO toCustomerDTO(CustomerEntity customerEntity) {
@@ -51,14 +51,31 @@ public class Mapping {
         return mapper.map(employees, List.class);
     }
 
-    public ItemEntity toItemEntity(ItemDTO itemDTO) {
-        return mapper.map(itemDTO, ItemEntity.class);
+    public ShoeEntity toShoeEntity(InventoryDTO inventoryDTO) {
+        ShoeEntity shoeEntity = new ShoeEntity();
+        shoeEntity.setShoe_id(inventoryDTO.getInvt_id());
+        shoeEntity.setDescription(inventoryDTO.getDescription());
+        shoeEntity.setPicture(inventoryDTO.getPicture());
+        shoeEntity.setQty(inventoryDTO.getQty());
+        shoeEntity.setBought_price(inventoryDTO.getBought_price());
+        shoeEntity.setSell_price(inventoryDTO.getSell_price());
+
+        return shoeEntity;
     }
-    public ItemDTO tiItemDTO(ItemEntity itemEntity) {
-        return  mapper.map(itemEntity, ItemDTO.class);
+    public InventoryDTO shoeToInventoryDTO(ShoeEntity shoeEntity) {
+        return  mapper.map(shoeEntity, InventoryDTO.class);
     }
-    public List<ItemDTO> toItemDtoList(List<CustomerEntity> customers) {
-        return mapper.map(customers, List.class);
+    public List<InventoryDTO> shoeToInventoryDtoList(List<ShoeEntity> shoes) {
+        return mapper.map(shoes, List.class);
+    }
+    public AccessoriesEntity toAccessoryEntity(InventoryDTO inventoryDTO) {
+        return mapper.map(inventoryDTO, AccessoriesEntity.class);
+    }
+    public InventoryDTO accessoryToInventoryDto(AccessoriesEntity accessoriesEntity) {
+        return  mapper.map(accessoriesEntity, InventoryDTO.class);
+    }
+    public List<InventoryDTO> accessoryTooInventoryDtoList(List<AccessoriesEntity> accessories) {
+        return mapper.map(accessories, List.class);
     }
 
     public OrderEntity toOrderEntity(OrderDTO orderDTO) {
