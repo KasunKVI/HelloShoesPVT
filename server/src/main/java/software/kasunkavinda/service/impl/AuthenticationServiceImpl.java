@@ -54,14 +54,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }else {
 
                 EmployeeEntity employeeEntity = employeeRepo.getReferenceById(signUp.getId());
-                var buildUser = UserDTO.builder()
+                var buildUser = UserEntity.builder()
                         .id(UUID.randomUUID().toString())
                         .email(signUp.getEmail())
                         .password(passwordEncoder.encode(signUp.getPassword()))
                         .role(signUp.getRole())
-                        .employeeDTO(mapper.toEmployeeDTO(employeeEntity))
+                        .employee(employeeEntity)
                         .build();
-                var savedUser = userRepo.save(mapper.toUserEntity(buildUser));
+                var savedUser = userRepo.save(buildUser);
                 var genToken = jwtService.generateToken(savedUser);
                 return JwtAuthResponse.builder().token(genToken).build();
             }
