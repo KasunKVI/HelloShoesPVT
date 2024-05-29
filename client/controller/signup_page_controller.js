@@ -77,6 +77,31 @@ $("#verify_code_btn").click( async function () {
 
     if ($("#verification_code").val() === verification) {
 
+        Swal.fire({
+            icon: "success",
+            title: "Verification successful...!",
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        $('#signup_section').fadeOut('slow', function () {
+            $('#login_section').fadeIn('slow');
+        });
+
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "Verification code incorrect...",
+            text: "Please try again later!",
+        });
+
+        return false;
+    }
+});
+
+$("#register_new_user_btn").click(async function (event) {
+
+    if (validateUser()) {
         var password = $("#signUp_pass").val();
 
         var hashPass = hashPassword(password);
@@ -114,31 +139,16 @@ $("#verify_code_btn").click( async function () {
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
 
-                $('#signup_section').fadeOut('slow', function () {
-                    $('#login_section').fadeIn('slow');
-                });
+                await verifyUser();
+
             }
 
         } catch (error) {
             console.error("SignUp failed:", error);
         }
 
-    } else {
-        Swal.fire({
-            icon: "error",
-            title: "Verification code incorrect...",
-            text: "Please try again later!",
-        });
 
-        return false;
-    }
-});
 
-$("#register_new_user_btn").click(async function (event) {
-
-    if (validateUser()) {
-
-        await verifyUser();
 
 
     }
