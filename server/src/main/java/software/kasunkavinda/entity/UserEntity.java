@@ -26,10 +26,10 @@ public class UserEntity implements SuperEntity, UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
+    private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    private String password;
 
     @OneToOne
     private EmployeeEntity employee;

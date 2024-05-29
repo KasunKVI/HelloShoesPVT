@@ -102,18 +102,23 @@ $("#verify_code_btn").click( async function () {
                 data: JSON.stringify(user),
                 contentType: "application/json"
             });
-
             const tokenString = response.token;
-            const [accessToken, refreshToken] = tokenString.split(':').map(token => token.trim());
+            if (tokenString === "User already exists") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'User already exists. Please try logging in.'
+                });
+            } else {
+                const [accessToken, refreshToken] = tokenString.split(':').map(token => token.trim());
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
 
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+                $('#signup_section').fadeOut('slow', function () {
+                    $('#login_section').fadeIn('slow');
+                });
+            }
 
-            $('#signup_section').fadeOut('slow', function () {
-                $('#login_section').fadeIn('slow');
-                // $('#sidenav-main').fadeIn('slow');
-                // $('#navbarBlur').fadeIn('slow');
-            });
         } catch (error) {
             console.error("SignUp failed:", error);
         }
@@ -137,6 +142,11 @@ $("#register_new_user_btn").click(async function (event) {
 
 
     }
+});
+$("#create_new_account_btn").click(async function (event) {
+
+        await loadBranches();
+
 });
 
 function hashPassword(password) {
@@ -196,3 +206,30 @@ $('#signUp_nic').on('input', async function (event) {
     }
 
 });
+
+async function loadBranches() {
+    try {
+
+        $.ajax({
+            url: 'http://localhost:8081/helloShoesPVT/api/v1/auth/getBranches',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                var branchSelect = $('#branch_signup');
+                branchSelect.empty();
+                branchSelect.append('<option value="S">Please Select the Branch</option>');
+                $.each(data, function(index, branchName) {
+                    branchSelect.append($('<option>', {
+                        value: branchName,
+                        text: branchName
+                    }));
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching branches:', jqXHR, textStatus, errorThrown);
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching branches:', error);
+    }
+}
