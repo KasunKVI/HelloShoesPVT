@@ -38,12 +38,12 @@ public class Employee {
             responseDTO.setCode("400");
             responseDTO.setMessage("Employee already exists");
             responseDTO.setContent(employeeDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         }else if (opt.equals("Email already exists")){
             responseDTO.setCode("400");
             responseDTO.setMessage("Email already exists");
             responseDTO.setContent(employeeDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         }
         else {
             responseDTO.setCode("200");
@@ -78,7 +78,7 @@ public class Employee {
             responseDTO.setCode("400");
             responseDTO.setMessage("Email already exists");
             responseDTO.setContent(employeeDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         } else {
             responseDTO.setCode("200");
             responseDTO.setMessage("Employee updated successfully");

@@ -26,8 +26,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public String saveEmployee(EmployeeDTO employeeDTO) {
 
-        System.out.println(employeeDTO.getEmployee_id());
-        System.out.println(employeeDTO.getBranchId());
         // Validate the employee ID
         if (employeeDTO.getEmployee_id() == null) {
             throw new IllegalArgumentException("The given id must not be null");
