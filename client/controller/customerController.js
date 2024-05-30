@@ -523,6 +523,7 @@ const attachEventListeners = () => {
                     });
 
                     loadCustomers();
+                    clearCustomerUpdateForm();
 
                 } catch (error) {
                     console.error("Request failed:", error);

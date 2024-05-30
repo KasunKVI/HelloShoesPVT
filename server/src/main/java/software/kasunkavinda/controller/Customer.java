@@ -33,12 +33,12 @@ public class Customer {
             responseDTO.setCode("400");
             responseDTO.setMessage("Customer already exists");
             responseDTO.setContent(customerDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         }else if (opt.equals("Email already exists")){
             responseDTO.setCode("400");
             responseDTO.setMessage("Email already exists");
             responseDTO.setContent(customerDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         }
         else {
             responseDTO.setCode("200");
@@ -72,7 +72,7 @@ public class Customer {
             responseDTO.setCode("400");
             responseDTO.setMessage("Email already exists");
             responseDTO.setContent(customerDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         } else {
             responseDTO.setCode("200");
             responseDTO.setMessage("Customer updated successfully");

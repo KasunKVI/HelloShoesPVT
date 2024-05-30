@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import software.kasunkavinda.dao.CustomerRepo;
 import software.kasunkavinda.dto.CustomerDTO;
 import software.kasunkavinda.entity.CustomerEntity;
+import software.kasunkavinda.entity.EmployeeEntity;
 import software.kasunkavinda.service.CustomerService;
 import software.kasunkavinda.util.Mapping;
 
@@ -52,12 +53,28 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String updateCustomer(CustomerDTO customerDTO) {
-        boolean emailExists = customerRepo.existsByEmail(customerDTO.getEmail());
-        if (emailExists) {
-            return "Email already exists";
-        }else {
-            customerRepo.save(mapper.toCustomerEntity(customerDTO));
-            return "Customer updated successfully";
+
+        Optional<CustomerEntity> existingCustomerOpt = customerRepo.findById(customerDTO.getCustomer_id());
+        if (!existingCustomerOpt.isPresent()) {
+            return "Customer not found";
         }
+
+        CustomerEntity existingCustomer = existingCustomerOpt.get();
+
+        // Check if the new email is different and if it already exists in the database
+        if (!existingCustomer.getEmail().equals(customerDTO.getEmail())) {
+            boolean emailExists = customerRepo.existsByEmail(customerDTO.getEmail());
+            if (emailExists) {
+                return "Email already exists";
+            }
+        }
+
+        // Update the employee entity with new values
+        CustomerEntity updateCustomer = mapper.toCustomerEntity(customerDTO);
+        updateCustomer.setCustomer_id(existingCustomer.getCustomer_id()); // Ensure the ID remains the same
+
+        customerRepo.save(updateCustomer);
+        return "Customer updated successfully";
     }
+
 }
