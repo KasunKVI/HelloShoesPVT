@@ -19,14 +19,16 @@ const loadEmployees = () => {
 
     $.ajax({
         type:"GET",
-        url: "http://localhost:8081/helloShoesPVT/api/v1/employee",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/employee/getAll/" + localStorage.getItem('branchId'),
         headers: {
             "Authorization": "Bearer " + accessToken
         },
         contentType: "application/json",
 
+
         success: function (response) {
 
+            console.log(response)
 
             response.map((employee, index) => {
 
@@ -38,7 +40,6 @@ const loadEmployees = () => {
                 const dobDate = new Date(employee.dob);
                 const formattedDobDate = `${dobDate.getFullYear()}-${dobDate.getMonth() + 1}-${dobDate.getDate()}`;
 
-                console.log(employee.profile_pic);
 
                 let tbl_row = `<tr data-employee-id=${employee.employee_id}>
                     <td class="employee_id"><p>${employee.employee_id}</p></td>
@@ -113,6 +114,7 @@ $('#employee_profile_pic_update').on('change', async function () {
 $('#employee_add_btn').click(function() {
 
     const profilePicBase64 = $('#employee_profile_pic').data('base64') || "";
+    const branchId = localStorage.getItem('branchId');
 
     if (validateEmployeeForm()) {
 
@@ -134,6 +136,7 @@ $('#employee_add_btn').click(function() {
             new Date().toISOString().split('T')[0],
             $('#employee_dob_add').val().trim(),
             $('#employee_guardian_add').val().trim(),
+            branchId,
 
         );
 
@@ -306,6 +309,7 @@ $("#employee_btn_clear_add").click(function() {
     clearEmployeeAddForm();
 });
 function clearEmployeeAddForm() {
+
     $('#employee_id_add').val('');
     $('#employee_name_add').val('');
     $('#employee_profile_pic').val('');
@@ -338,9 +342,10 @@ async function submitEmployeeForm(employee, type) {
             employee.role = "USER";
         }
 
-        console.log(employee);
+
 
         try {
+            console.log(employee);
             const response = await $.ajax({
                 type: "POST",
                 url: "http://localhost:8081/helloShoesPVT/api/v1/employee/save",
@@ -350,6 +355,7 @@ async function submitEmployeeForm(employee, type) {
                 data: JSON.stringify(employee),
                 contentType: "application/json"
             });
+
 
             // Assuming the response has a 'message' property
             if (response.message === "Employee saved successfully") {
@@ -382,9 +388,10 @@ async function submitEmployeeForm(employee, type) {
         }
     }else {
         try {
+
             const response = await $.ajax({
                 type: "PUT",
-                url: "http://localhost:8081/helloShoesPVT/api/v1/employee",
+                url: "http://localhost:8081/helloShoesPVT/api/v1/employee/update",
                 headers: {
                     "Authorization": "Bearer " + accessToken
                 },
@@ -401,6 +408,7 @@ async function submitEmployeeForm(employee, type) {
                 });
                  loadEmployees();
                  await searchEmployee(employee.employee_id);
+
             }else {
                 Swal.fire({
                     icon: "error",
@@ -472,7 +480,7 @@ async function searchEmployee(employeeId) {
         Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Customer not found!",
+            text: "Employee not found!",
         });
 
     }
@@ -565,7 +573,7 @@ const attachEventListenersEmployee = () => {
 
                     swalWithBootstrapButtons.fire({
                         title: "Deleted!",
-                        text: "Customer has been deleted.",
+                        text: "Employee has been deleted.",
                         icon: "success"
                     });
 
@@ -646,6 +654,8 @@ $("#employee_add_Update").click(async function (event) {
         profilePicUpdateBase64 = profilepic;
     }
 
+    let branchId = localStorage.getItem('branchId');
+
     if (validateEmployeeUpdateForm()) {
         const employee = new EmployeeDTO(
             $('#employee_id_update').val().trim(),
@@ -665,6 +675,7 @@ $("#employee_add_Update").click(async function (event) {
             joindate,
             $('#employee_dob_update').val().trim(),
             $('#employee_guardian_update').val().trim(),
+            branchId,
 
         );
 

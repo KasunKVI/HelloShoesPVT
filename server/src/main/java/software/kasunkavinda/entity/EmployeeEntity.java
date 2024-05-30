@@ -36,15 +36,13 @@ public class EmployeeEntity implements SuperEntity {
     @Column(unique = true)
     private String email;
     private String designation;
-
     private String contact;
-
     private String emergency_contact;
     private Date joined_date;
     private Date dob;
     private String guardian_name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private BranchEntity branch;
 
     @OneToMany(mappedBy = "employee")

@@ -5,16 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import software.kasunkavinda.dto.CustomerDTO;
 import software.kasunkavinda.dto.EmployeeDTO;
 import software.kasunkavinda.dto.ResponseDTO;
-import software.kasunkavinda.entity.CustomerEntity;
-import software.kasunkavinda.entity.EmployeeEntity;
 import software.kasunkavinda.service.EmployeeService;
-import software.kasunkavinda.util.UtilMatter;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/employee")
@@ -33,7 +28,10 @@ public class Employee {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity saveEmployee(@RequestBody EmployeeDTO employeeDTO){
 
-        System.out.println(employeeDTO);
+        if (employeeDTO.getEmployee_id() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
         String opt = employeeService.saveEmployee(employeeDTO);
         
         if (opt.equals("Employee already exists")){
@@ -53,7 +51,6 @@ public class Employee {
             responseDTO.setContent(employeeDTO);
             return new ResponseEntity(responseDTO, HttpStatus.OK);
         }
-
     }
 
     @GetMapping("/{id}")
@@ -67,14 +64,15 @@ public class Employee {
         employeeService.deleteEmployee(id);
     }
 
-    @GetMapping
-    public List<EmployeeDTO> getAllEmployee() {
-        return employeeService.getAllEmployee();
+    @GetMapping("getAll/{branchId}")
+    public List<EmployeeDTO> getAllEmployee(@PathVariable String branchId) {
+        return employeeService.getAllEmployee(branchId);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateEmployee(@RequestBody EmployeeDTO employeeDTO){
+
         String resp = employeeService.updateEmployee(employeeDTO);
         if (resp.equals("Email already exists")) {
             responseDTO.setCode("400");
