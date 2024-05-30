@@ -18,8 +18,8 @@ import java.util.Random;
 @Transactional
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+
+    private final JavaMailSender mailSender;
 
     public String sendVerificationCode(String recipientEmail) {
 
