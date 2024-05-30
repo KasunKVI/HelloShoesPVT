@@ -30,5 +30,4 @@ public class BranchEntity implements SuperEntity {
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     private List<EmployeeEntity> employees;
 
-
 }
