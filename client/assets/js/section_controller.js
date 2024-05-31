@@ -1,5 +1,4 @@
 
-
 $('#signup_section').css('display', 'none');
 $('#main_dashboard').css('display', 'none');
 $('#sales_section').css('display','none');
@@ -91,6 +90,8 @@ $('#create_new_account_btn').on('click', () => {
 
     $('#login_section').fadeOut('slow', function() {
         $('#signup_section').fadeIn('slow');
+        $("#signUp_role").prop('disabled', true);
+        $("#signUp_email").prop('disabled', true);
     });
 
 });
