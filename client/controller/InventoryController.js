@@ -126,10 +126,10 @@ function loadInventoryTable() {
                         <div class="btn-reveal-trigger position-static align-middle">
                             <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
                             <div class="dropdown-menu dropdown-menu-end py-2">
-                                <a class="dropdown-item view-action-invt" href="#!" data-bs-toggle="modal" data-bs-target="#updateModelShoe" data-inventory-id="${inventoryItem.invt_id}">View</a>
-                                <a class="dropdown-item update-action-invt text-danger" href="#!" data-bs-toggle="modal" data-bs-target="#updateModelShoe" data-inventory-id="${inventoryItem.invt_id}">Update</a>
+                                <a class="dropdown-item view-action-invt" href="#!" data-inventory-id="${inventoryItem.invt_id}">View</a>
+                                <a class="dropdown-item update-action-invt text-danger" href="#!" data-inventory-id="${inventoryItem.invt_id}">Update</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item delete-action-invt text-warning" href="#!" data-bs-target="#updateModelShoe" id="inventory_delete_btn" data-inventory-id="${inventoryItem.invt_id}">Remove</a>
+                                <a class="dropdown-item delete-action-invt text-warning" href="#!" data-inventory-id="${inventoryItem.invt_id}">Remove</a>
                             </div>
                         </div>
                     </td>
@@ -179,34 +179,52 @@ async function searchInventory(invt_id) {
             contentType: "application/json"
         });
 
-        // Populate the form fields with the retrieved customer details
-        $("#shoe_preview_update").attr('src', response.picture);
-
-        // Clear existing options and add the new brand option
-        $('#shoe_supplier_update').empty().append('<option value="" selected></option>');
-
-        // Add the brand to the dropdown
-        if (response.supplier_id) {
-            $('#shoe_supplier_update').append('<option value="' + response.supplier_id + '" selected>' + response.supplier_id + '</option>');
-        }
-
-        $('#supplier_category_update').val(response.category);
-
-
-        $("#shoe_bought_price_update").val(response.bought_price);
-        $("#shoe_selling_update").val(response.sell_price);
-        selectVerityAndOccasion(response.description);
-        const size = invt_id.slice(-2);
-
-        $('#shoe_size_update').empty().append('<option value="" selected></option>');
-        $('#shoe_size_update').append('<option value="'+size+'" selected>' + size + '</option>');
-        $("#shoe_qty_update").val(response.qty);
         itemPic = response.picture;
 
+        console.log(response);
+        if (invt_id.startsWith("ACC")){
+
+            // Populate the form fields with the retrieved customer details
+            $("#accessory_preview_update").attr('src', response.picture);
+
+            // Clear existing options and add the new brand option
+            $('#accessory_supplier_update').empty().append('<option value="" selected></option>');
+
+            // Add the brand to the dropdown
+            if (response.supplier_id) {
+                $('#accessory_supplier_update').append('<option value="' + response.supplier_id + '" selected>' + response.supplier_id + '</option>');
+            }
+
+            $("#accessory_bought_price_update").val(response.bought_price);
+            $("#accessory_selling_update").val(response.sell_price);
+            $("#accessory_type_update").val(response.description);
+            $("#accessory_qty_update").val(response.qty);
+
+        }else {
+            // Populate the form fields with the retrieved customer details
+            $("#shoe_preview_update").attr('src', response.picture);
+
+            // Clear existing options and add the new brand option
+            $('#shoe_supplier_update').empty().append('<option value="" selected></option>');
+
+            // Add the brand to the dropdown
+            if (response.supplier_id) {
+                $('#shoe_supplier_update').append('<option value="' + response.supplier_id + '" selected>' + response.supplier_id + '</option>');
+            }
+
+            $('#supplier_category_update').val(response.category);
 
 
+            $("#shoe_bought_price_update").val(response.bought_price);
+            $("#shoe_selling_update").val(response.sell_price);
+            selectVerityAndOccasion(response.description);
+            const size = invt_id.slice(-2);
 
+            $('#shoe_size_update').empty().append('<option value="" selected></option>');
+            $('#shoe_size_update').append('<option value="' + size + '" selected>' + size + '</option>');
+            $("#shoe_qty_update").val(response.qty);
 
+        }
 
     } catch (error) {
         console.error("Request failed:", error);
@@ -231,17 +249,36 @@ const attachEventListenersInventory = () => {
         e.preventDefault();
         const invt_id = $(this).data('inventory-id');
 
-        // Change the modal title to "Item Info"
-        $("#popupModalLabelShoeUpdate").text("Item Info");
+        if (invt_id.startsWith("ACC")){
 
-        // Hide the Update button
-        $("#shoe_update_btn").hide();
+            $('#updateModelAccessories').modal('show')
 
+            // Change the modal title to "Item Info"
+            $("#popupModalLabelAccessoriesUpdate").text("Item Info");
 
-        // Disable all input fields
-        $("#shoe_picture_update, #shoe_supplier_update, #shoe_bought_price_update,#shoe_selling_update,#shoe_gender_update,#shoe_Description, #shoe_size_update, #shoe_qty_update").prop("disabled", true);
+            // Hide the Update button
+            $("#accessory_add_update").hide();
 
-        searchInventory(invt_id);
+            // Disable all input fields
+
+            $("#accessories_picture_update, #accessory_supplier_update, #accessory_bought_price_update,#accessory_selling_update,#accessory_type_update, #accessory_qty_update").prop("disabled", true);
+
+        }else {
+
+            $('#updateModelSupplier').modal('show')
+
+            // Change the modal title to "Item Info"
+            $("#popupModalLabelShoeUpdate").text("Item Info");
+
+            // Hide the Update button
+            $("#shoe_update_btn").hide();
+
+            // Disable all input fields
+            $('#updateModelShoe').modal('show');
+            $("#shoe_picture_update, #shoe_supplier_update, #shoe_bought_price_update,#shoe_selling_update,#shoe_gender_update,#shoe_Description, #shoe_size_update, #shoe_qty_update").prop("disabled", true);
+
+        }
+         searchInventory(invt_id);
 
     });
 
@@ -252,40 +289,87 @@ const attachEventListenersInventory = () => {
 
         const invt_id = $(this).data('inventory-id');
 
-        // Change the modal title to "Update Customer"
-        $("#popupModalLabelShoeUpdate").text("Update Item");
+        if (invt_id.startsWith("ACC")){
 
-        // Show the Update button
-        $("#shoe_update_btn").show();
+            $('#updateModelAccessories').modal('show')
 
-        // Enable all input fields
-        $("#shoe_picture_update, #shoe_supplier_update, #shoe_bought_price_update,#shoe_selling_update,#shoe_gender_update, #shoe_size_update, #shoe_qty_update").prop("disabled", false);
+            // Change the modal title to "Update Customer"
+            $("#popupModalLabelAccessoriesUpdate").text("Update Item");
 
-        itemId = invt_id;
+            // Show the Update button
+            $("#accessory_add_update").show();
 
-        const accessToken = localStorage.getItem('accessToken');
+            $("#accessory_type_update").prop("disabled", true);
 
-        $.ajax({
-            type:"GET",
-            url: "http://localhost:8081/helloShoesPVT/api/v1/supplier/ids",
-            headers: {
-                "Authorization": "Bearer " + accessToken
-            },
-            contentType: "application/json",
+            // Enable all input fields
+            $("#accessories_picture_update, #accessory_supplier_update, #accessory_bought_price_update,#accessory_selling_update, #accessory_qty_update").prop("disabled", false);
+
+            itemId = invt_id;
+
+            const accessToken = localStorage.getItem('accessToken');
+
+            $.ajax({
+                type:"GET",
+                url: "http://localhost:8081/helloShoesPVT/api/v1/supplier/ids",
+                headers: {
+                    "Authorization": "Bearer " + accessToken
+                },
+                contentType: "application/json",
 
 
-            success: function (response) {
-                console.log('Supplier IDs:', response);
-                const select = $('#shoe_supplier_update');
-                response.forEach(id => {
-                    const option = $('<option></option>').val(id).text(id);
-                    select.append(option);
-                });
-            },
-            error: function(error) {
-                console.error('Error fetching Item IDs:', error);
-            }
-        });
+                success: function (response) {
+                    console.log('Supplier IDs:', response);
+                    const select = $('#accessory_supplier_update');
+                    response.forEach(id => {
+                        const option = $('<option></option>').val(id).text(id);
+                        select.append(option);
+                    });
+                },
+                error: function(error) {
+                    console.error('Error fetching Item IDs:', error);
+                }
+            });
+
+        }else {
+
+            // Change the modal title to "Update Customer"
+            $("#popupModalLabelShoeUpdate").text("Update Item");
+
+            // Show the Update button
+            $("#shoe_update_btn").show();
+
+            // Enable all input fields
+            $("#shoe_picture_update, #shoe_supplier_update, #shoe_bought_price_update,#shoe_selling_update,#shoe_gender_update, #shoe_size_update, #shoe_qty_update").prop("disabled", false);
+
+            itemId = invt_id;
+
+            const accessToken = localStorage.getItem('accessToken');
+
+            $.ajax({
+                type:"GET",
+                url: "http://localhost:8081/helloShoesPVT/api/v1/supplier/ids",
+                headers: {
+                    "Authorization": "Bearer " + accessToken
+                },
+                contentType: "application/json",
+
+
+                success: function (response) {
+                    console.log('Supplier IDs:', response);
+                    const select = $('#shoe_supplier_update');
+                    response.forEach(id => {
+                        const option = $('<option></option>').val(id).text(id);
+                        select.append(option);
+                    });
+                },
+                error: function(error) {
+                    console.error('Error fetching Item IDs:', error);
+                }
+            });
+
+
+        }
+
 
         searchInventory(invt_id);
 
@@ -338,6 +422,7 @@ const attachEventListenersInventory = () => {
                     loadInventoryTable();
                     clearInventoryUpdateForm();
 
+
                 } catch (error) {
                     console.error("Request failed:", error);
 
@@ -364,10 +449,13 @@ const attachEventListenersInventory = () => {
     });
 };
 
+
+
 async function submitInventoryForm(inventory, type) {
+
     const accessToken = localStorage.getItem('accessToken');
 
-    if (type === "Save_Shoe") {
+    if (type === "Save") {
 
         try {
             const response = await $.ajax({
@@ -392,6 +480,7 @@ async function submitInventoryForm(inventory, type) {
 
                 loadInventoryTable();
                 clearShoeAddForm();
+                clearAccessoriesAddForm();
 
             } else {
                 Swal.fire({
@@ -409,7 +498,7 @@ async function submitInventoryForm(inventory, type) {
                 text: "You have no access to add new item."
             });
         }
-    }else if (type === "Update_Shoe") {
+    }else if (type === "Update") {
 
         console.log(inventory);
         try {
@@ -452,6 +541,8 @@ async function submitInventoryForm(inventory, type) {
                 text: "You have no access to add new item."
             });
         }
+    }else if (t){
+
     }
     }
 $('#addNewShoeButton').click(function () {
@@ -505,7 +596,7 @@ $('#addNewShoeButton').click(function () {
             );
 
 
-            submitInventoryForm(inventoryDTO, "Save_Shoe");
+            submitInventoryForm(inventoryDTO, "Save");
 
 
         }
@@ -605,7 +696,7 @@ $('#shoe_update_btn').click(function () {
             $('#shoe_supplier_update').find('option:selected').text(),
         );
 
-        submitInventoryForm(inventory,"Update_Shoe");
+        submitInventoryForm(inventory,"Update");
     }
 
 });
@@ -613,3 +704,161 @@ $('#shoe_update_btn').click(function () {
 $('#shoe_add_clear_btn').click(function () {
     clearShoeAddForm();
 });
+
+
+////////////////////////
+
+
+function validateAccessoriesAddForm() {
+    let isValidAccessoriesAdd = true;
+
+    isValidAccessoriesAdd &= validateNotEmpty($('#accessory_picture'));
+    isValidAccessoriesAdd &= validateNotEmpty($('#accessory_selling_price'));
+    // isValidShoeUpdate &= validateNotEmpty($('#shoe_occasion_add'));
+    // isValidShoeUpdate &= validateNotEmpty($('#shoe_picture_update'));
+    isValidAccessoriesAdd &= validateNotEmpty($('#accessory_bought_price_add'));
+    isValidAccessoriesAdd &= validateNotEmpty($('#accessory_qty_add'));
+    isValidAccessoriesAdd &= validateNotEmpty($('#accessory_type_add'));
+    isValidAccessoriesAdd &= validateNotEmpty($('#accessory_supplier_add'));
+
+    // Show custom alert if the form is invalid
+    if (!isValidAccessoriesAdd) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please correct the highlighted fields'
+        });
+    }
+
+    return isValidAccessoriesAdd;
+}
+
+$('#accessory_add_btn').click(function () {
+
+
+     if (validateAccessoriesAddForm()) {
+
+        let itemId = "ACC" + $('#accessory_type_add').val();
+        let accssoriyPicBase64 = $('#accessory_picture').data('base64') || "";
+
+        const inventoryDTO = new InventoryDTO(
+            itemId,
+            $('#accessory_type_add').find('option:selected').text(),
+            accssoriyPicBase64,
+            $('#accessory_qty_add').val().trim(),
+            $('#accessory_bought_price_add').val(),
+            $('#accessory_selling_price').val().trim(),
+            "Accessories",
+            $('#accessory_supplier_add').find('option:selected').text(),
+        );
+
+
+        submitInventoryForm(inventoryDTO, "Save");
+
+
+     }
+});
+
+
+$('#addNewAccessoriesButton').click(function () {
+    const accessToken = localStorage.getItem('accessToken');
+
+    $.ajax({
+        type:"GET",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/supplier/ids",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        },
+        contentType: "application/json",
+
+
+        success: function (response) {
+            console.log('Supplier IDs:', response);
+            const select = $('#accessory_supplier_add');
+            response.forEach(id => {
+                const option = $('<option></option>').val(id).text(id);
+                select.append(option);
+            });
+        },
+        error: function(error) {
+            console.error('Error fetching Item IDs:', error);
+        }
+    });
+});
+
+// Event listener for profile picture input
+$('#accessory_picture').on('change', async function () {
+    const file = this.files[0];
+    if (file) {
+        const base64 = await toBase64(file);
+        $('#accessory_preview').attr('src', base64); // Set image preview
+        $('#accessory_picture').data('base64', base64); // Store base64 string in data attribute
+    }
+});
+
+function clearAccessoriesAddForm() {
+    // Clear image preview
+    $('#accessory_preview').attr('src', '');
+
+    // Reset file input
+    $('#accessory_picture').val('');
+
+    // Reset select fields to default option
+    $('#accessory_supplier_add').val('').change();
+    $('#accessory_type_add').val('').change();
+
+    // Clear text and number inputs
+    $('#accessory_bought_price_add').val('');
+    $('#accessory_selling_price').val('');
+    $('#accessory_qty_add').val('');
+}
+
+$('#accessory_close_btn').click(function () {
+    clearInventoryUpdateForm();
+});
+
+$('#accessory_add_update').click(function () {
+
+    let profilePicUpdateBase64 = $('#accessory_picture_update').data('base64') || "";
+
+    if (profilePicUpdateBase64 === "") {
+        profilePicUpdateBase64 = itemPic;
+    }
+
+    if (validateAccessoryUpdateForm()) {
+
+        const inventory = new InventoryDTO(
+            itemId,
+            $('#accessory_type_update').val().trim(),
+            itemPic,
+            $('#accessory_qty_update').val().trim(),
+            $('#accessory_bought_price_update').val().trim(),
+            $('#accessory_selling_update').val().trim(),
+            "Accessories",
+            $('#accessory_supplier_update').find('option:selected').text(),
+        );
+
+        submitInventoryForm(inventory,"Update");
+    }
+
+});
+function validateAccessoryUpdateForm() {
+    let isValidAccessoryUpdate = true;
+
+    isValidAccessoryUpdate &= validateNotEmpty($('#accessory_qty_update'));
+    isValidAccessoryUpdate &= validateNotEmpty($('#accessory_bought_price_update'));
+    isValidAccessoryUpdate &= validateNotEmpty($('#accessory_type_update'));
+    isValidAccessoryUpdate &= validateNotEmpty($('#accessory_selling_update'));
+    isValidAccessoryUpdate &= validateNotEmpty($('#accessory_supplier_update'));
+
+    // Show custom alert if the form is invalid
+    if (!isValidAccessoryUpdate) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please correct the highlighted fields'
+        });
+    }
+
+    return isValidAccessoryUpdate;
+}
