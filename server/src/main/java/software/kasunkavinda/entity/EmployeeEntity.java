@@ -1,5 +1,6 @@
 package software.kasunkavinda.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -52,6 +53,7 @@ public class EmployeeEntity implements SuperEntity {
     private List<RefundEntity> refunds;
 
     @OneToOne
+    @JsonManagedReference
     private UserEntity user;
 
 }
