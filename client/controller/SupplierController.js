@@ -17,15 +17,8 @@ function validateSupplierForm() {
     isValidSupplier &= validateField($('#supplier_postal_code_add'),postalCodePattern);
     isValidSupplier &= validateField($('#supplier_contact_add'), mobileNumberPattern);
     isValidSupplier &= validateNotEmpty($('#supplier_brand_add'));
+    isValidSupplier &= validateNotEmpty($('#supplier_category_add'));
 
-
-    if (($('#supplier_category_add').val() === "S")){
-            field.removeClass('valid').addClass('invalid');
-
-        } else {
-            field.removeClass('invalid').addClass('valid');
-
-        }
 
     // Show custom alert if the form is invalid
     if (!isValidSupplier) {
@@ -200,6 +193,7 @@ async function submitSupplierForm(supplier, type) {
 
     if (type === "Save") {
 
+        console.log("Supplier")
         try {
             const response = await $.ajax({
                 type: "POST",
@@ -260,7 +254,9 @@ async function submitSupplierForm(supplier, type) {
                     timer: 1500
                 });
 
-                await searchSupplier(supplier.supplier_id);
+                loadSuppliers();
+                $(".btn-close").click();
+
             } else {
                 Swal.fire({
                     icon: "error",
@@ -300,8 +296,9 @@ function clearSupplierAddForm() {
 
 $('#supplier_add_btn').click(function() {
 
-    if (validateSupplierForm()) {
 
+    if (validateSupplierForm()) {
+        console.log("Sfegrefe")
         const supplier = new SupplierDTO(
             $('#supplier_id_add').val(),
             $('#supplier_name_add').val().trim(),
@@ -523,13 +520,15 @@ function loadSuppliers() {
 
     $.ajax({
         type:"GET",
-        url: "http://localhost:8081/helloShoesPVT/api/v1/supplier",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/supplier/all",
         headers: {
             "Authorization": "Bearer " + accessToken
         },
         contentType: "application/json",
 
         success: function (response) {
+
+            console.log(response)
 
 
             response.map((supplier, index) => {

@@ -73,7 +73,7 @@ public class Supplier  {
         supplierService.deleteSupplier(id);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<SupplierDTO> getAllSuppliers() {
         return supplierService.getAllSuppliers();
     }

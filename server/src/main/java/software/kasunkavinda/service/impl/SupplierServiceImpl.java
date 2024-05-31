@@ -49,6 +49,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public List<SupplierDTO> getAllSuppliers() {
         return mapper.toSupplierDtoList(supplierRepo.findAll());
+
     }
 
     @Override

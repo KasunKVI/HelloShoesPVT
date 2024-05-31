@@ -10,6 +10,7 @@ import software.kasunkavinda.enums.Gender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -89,16 +90,32 @@ public class Mapping {
         return shoeEntity;
     }
     public InventoryDTO shoeToInventoryDTO(ShoeEntity shoeEntity) {
+
         return  mapper.map(shoeEntity, InventoryDTO.class);
     }
     public List<InventoryDTO> shoeToInventoryDtoList(List<ShoeEntity> shoes) {
         return mapper.map(shoes, List.class);
     }
     public AccessoriesEntity toAccessoryEntity(InventoryDTO inventoryDTO) {
-        return mapper.map(inventoryDTO, AccessoriesEntity.class);
+        AccessoriesEntity accessoriesEntity = new AccessoriesEntity();
+        accessoriesEntity.setAccessories_id(inventoryDTO.getInvt_id());
+        accessoriesEntity.setDescription(inventoryDTO.getDescription());
+        accessoriesEntity.setPicture(inventoryDTO.getPicture());
+        accessoriesEntity.setQty(inventoryDTO.getQty());
+        accessoriesEntity.setBought_price(inventoryDTO.getBought_price());
+        accessoriesEntity.setSell_price(inventoryDTO.getSell_price());
+        return accessoriesEntity;
     }
     public InventoryDTO accessoryToInventoryDto(AccessoriesEntity accessoriesEntity) {
-        return  mapper.map(accessoriesEntity, InventoryDTO.class);
+        InventoryDTO inventoryDTO = new InventoryDTO();
+        inventoryDTO.setInvt_id(accessoriesEntity.getAccessories_id());
+        inventoryDTO.setQty(accessoriesEntity.getQty());
+        inventoryDTO.setDescription(accessoriesEntity.getDescription());
+        inventoryDTO.setPicture(accessoriesEntity.getPicture());
+        inventoryDTO.setSell_price(accessoriesEntity.getSell_price());
+        inventoryDTO.setBought_price(accessoriesEntity.getBought_price());
+        inventoryDTO.setSupplier_id(accessoriesEntity.getSupplier().getSupplier_id());
+        return inventoryDTO;
     }
     public List<InventoryDTO> accessoryTooInventoryDtoList(List<AccessoriesEntity> accessories) {
         return mapper.map(accessories, List.class);
@@ -128,7 +145,12 @@ public class Mapping {
         return  mapper.map(supplierEntity, SupplierDTO.class);
     }
     public List<SupplierDTO> toSupplierDtoList(List<SupplierEntity> suppliers) {
-        return mapper.map(suppliers, List.class);
+
+        return suppliers.stream()
+                .map(supplierEntity -> mapper.map(supplierEntity, SupplierDTO.class))
+                .collect(Collectors.toList());
+
+//        return mapper.map(suppliers, List.class);
     }
 
 
