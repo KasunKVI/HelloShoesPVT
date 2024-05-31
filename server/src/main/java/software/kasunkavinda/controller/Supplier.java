@@ -10,9 +10,11 @@ import software.kasunkavinda.dto.EmployeeDTO;
 import software.kasunkavinda.dto.ResponseDTO;
 import software.kasunkavinda.dto.SupplierDTO;
 import software.kasunkavinda.entity.SuperEntity;
+import software.kasunkavinda.entity.SupplierEntity;
 import software.kasunkavinda.service.SupplierService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/supplier")
@@ -91,5 +93,9 @@ public class Supplier  {
             responseDTO.setContent(supplierDTO);
             return new ResponseEntity(responseDTO, HttpStatus.OK);
         }
+    }
+    @GetMapping("/ids")
+    public List<String> getAllSupplierIds() {
+        return supplierService.getAllSupplierIds();
     }
 }

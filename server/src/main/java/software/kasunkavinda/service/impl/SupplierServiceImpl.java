@@ -12,6 +12,7 @@ import software.kasunkavinda.util.Mapping;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,5 +80,13 @@ public class SupplierServiceImpl implements SupplierService {
     public String getLatestSupplierId() {
         Optional<SupplierEntity> supplier = supplierRepo.findTopByOrderBySupplierIdDesc();
         return supplier.map(SupplierEntity::getSupplier_id).orElse(null);
+    }
+
+    @Override
+    public List<String> getAllSupplierIds() {
+        List<SupplierEntity> suppliers = supplierRepo.findAll();
+        return suppliers.stream()
+                .map(SupplierEntity::getSupplier_id)
+                .collect(Collectors.toList());
     }
 }
