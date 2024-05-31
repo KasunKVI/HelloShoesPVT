@@ -624,24 +624,36 @@ $('#addNewShoeButton').click(function () {
 
 
 function validateField(field, pattern) {
-    if (!pattern.test(field.val().trim())) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
+    if (pattern.test(field.val())) {
+        field.removeClass('is-invalid').addClass('is-valid');
         return true;
+    } else {
+        field.removeClass('is-valid').addClass('is-invalid');
+        return false;
     }
 }
 
 function validateNotEmpty(field) {
-    if (!field.val().trim()) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
+    if (field.val().trim() !== '') {
+        field.removeClass('is-invalid').addClass('is-valid');
         return true;
+    } else {
+        field.removeClass('is-valid').addClass('is-invalid');
+        return false;
     }
 }
+
+function validateNumberField(field) {
+    const value = field.val().trim();
+    if (!isNaN(value) && value !== '') {
+        field.removeClass('is-invalid').addClass('is-valid');
+        return true;
+    } else {
+        field.removeClass('is-valid').addClass('is-invalid');
+        return false
+    }
+}
+
 
 $("#inventory_link").click(function(event) {
     loadInventoryTable();
@@ -862,3 +874,119 @@ function validateAccessoryUpdateForm() {
 
     return isValidAccessoryUpdate;
 }
+
+
+
+
+
+
+
+
+
+
+
+////////////////////Field Validation////////////////////
+
+
+$('#accessory_supplier_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#accessory_bought_price_add').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#accessory_selling_price').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#accessory_type_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#accessory_qty_add').on('input', function() {
+    validateNumberField($(this));
+});
+
+//////////////
+
+$('#accessory_supplier_update').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#accessory_bought_price_update').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#accessory_selling_update').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#accessory_type_update').on('input', function() {
+    validateNotEmpty($(this));
+});
+
+$('#accessory_qty_update').on('input', function() {
+    validateNumberField($(this));
+});
+
+
+//////////
+
+$('#shoe_supplier_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_bought_price_add').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#shoe_selling_price').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#shoe_gender_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_occasion_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_verity_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_size_add').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_qty_add').on('input', function() {
+    validateNumberField($(this));
+});
+
+//////////
+
+$('#shoe_supplier_update').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_bought_price_update').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#shoe_selling_update').on('input', function() {
+    validateNumberField($(this));
+});
+
+$('#shoe_gender_update').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_size_update').on('change', function() {
+    validateNotEmpty($(this));
+});
+
+$('#shoe_qty_update').on('input', function() {
+    validateNumberField($(this));
+});

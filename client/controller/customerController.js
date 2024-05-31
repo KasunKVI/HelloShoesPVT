@@ -11,22 +11,22 @@ var joindate;
 
 
 function validateField(field, pattern) {
-    if (!pattern.test(field.val().trim())) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
+    if (pattern.test(field.val())) {
+        field.removeClass('is-invalid').addClass('is-valid');
         return true;
+    } else {
+        field.removeClass('is-valid').addClass('is-invalid');
+        return false;
     }
 }
 
 function validateNotEmpty(field) {
-    if (!field.val().trim()) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
+    if (field.val().trim() !== '') {
+        field.removeClass('is-invalid').addClass('is-valid');
         return true;
+    } else {
+        field.removeClass('is-valid').addClass('is-invalid');
+        return false;
     }
 }
 function validateCustomerForm() {
