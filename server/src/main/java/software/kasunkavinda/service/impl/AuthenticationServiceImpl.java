@@ -41,7 +41,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var userByEmail = userRepo.findByEmail(signIn.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         var generatedToken = jwtService.generateToken(userByEmail);
-        return JwtAuthResponse.builder().token(generatedToken).build() ;
+
+
+        // Fetch branch information
+        String branchId = null;
+        String userId = null;
+        if (userByEmail.getEmployee() != null && userByEmail.getEmployee().getBranch() != null) {
+            branchId = userByEmail.getEmployee().getBranch().getBranch_id();
+            userId = userByEmail.getEmployee().getEmployee_id();
+
+        }
+
+        // Return response with token and branch name
+        return JwtAuthResponse.builder()
+                .token(generatedToken)
+                .branchId(branchId)
+                .employeeId(userId)
+                .build();
+
     }
 
     @Override
@@ -63,7 +80,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .build();
                 var savedUser = userRepo.save(buildUser);
                 var genToken = jwtService.generateToken(savedUser);
-                return JwtAuthResponse.builder().token(genToken).build();
+
+                // Fetch branch information
+                String branchId = null;
+                String userId = null;
+                if (savedUser.getEmployee() != null && savedUser.getEmployee().getBranch() != null) {
+                    branchId = savedUser.getEmployee().getBranch().getBranch_id();
+                    userId = savedUser.getEmployee().getEmployee_id();
+
+                }
+                // Return response with token and branch name
+                return JwtAuthResponse.builder()
+                        .token(genToken)
+                        .branchId(branchId)
+                        .employeeId(userId)
+                        .build();
+
             }
     }
 
@@ -72,6 +104,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var userName = jwtService.extractUsername(accessToken);
         var userEntity = userRepo.findByEmail(userName).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         var refreshToken = jwtService.generateToken(userEntity);
-        return JwtAuthResponse.builder().token(refreshToken).build();
+//        return JwtAuthResponse.builder().token(refreshToken).build();
+
+        // Fetch branch information
+        String branchId = null;
+        String userId = null;
+        if (userEntity.getEmployee() != null && userEntity.getEmployee().getBranch() != null) {
+            branchId = userEntity.getEmployee().getBranch().getBranch_id();
+            userId = userEntity.getEmployee().getEmployee_id();
+
+        }
+        // Return response with token and branch name
+        return JwtAuthResponse.builder()
+                .token(refreshToken)
+                .branchId(branchId)
+                .employeeId(userId)
+                .build();
     }
 }
