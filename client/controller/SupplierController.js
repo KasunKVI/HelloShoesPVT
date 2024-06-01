@@ -69,6 +69,7 @@ async function getNewSupplierId() {
             title: "Oops...",
             text:  "Error fetching supplier id. Please try again later"
         });
+        await refreshAccessToken();
     }
 
 }
@@ -234,6 +235,7 @@ async function submitSupplierForm(supplier, type) {
                 title: "Oops...",
                 text: "You have no access to add new supplier."
             });
+            await refreshAccessToken();
         }
     } else {
         try {
@@ -275,6 +277,7 @@ async function submitSupplierForm(supplier, type) {
                 title: "Oops...",
                 text: error.responseJSON ? error.responseJSON.message : "You have no access to Update this Supplier"
             });
+            await refreshAccessToken();
         }
     }
 
@@ -366,6 +369,7 @@ async function searchSupplier(supplierId) {
             title: "Oops...",
             text: "Supplier not found!",
         });
+        await refreshAccessToken();
 
     }
 };
@@ -544,9 +548,11 @@ function loadSuppliers() {
             attachEventListenerSupplier()
 
         },
-        error: function (xhr, status, error) {
+        error: async function (xhr, status, error) {
             console.error('Something Error');
+            await refreshAccessToken();
         }
+
     });
 
 }

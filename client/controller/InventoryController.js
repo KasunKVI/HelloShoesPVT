@@ -140,8 +140,9 @@ function loadInventoryTable() {
              attachEventListenersInventory();
 
         },
-        error: function (xhr, status, error) {
+        error: async function (xhr, status, error) {
             console.error('Error loading inventory:', error);
+            await refreshAccessToken();
         }
     });
 }
@@ -498,6 +499,8 @@ async function submitInventoryForm(inventory, type) {
                 title: "Oops...",
                 text: "You have no access to add new item."
             });
+
+            await refreshAccessToken();
         }
     }else if (type === "Update") {
 
@@ -541,11 +544,10 @@ async function submitInventoryForm(inventory, type) {
                 title: "Oops...",
                 text: "You have no access to add new item."
             });
+            await refreshAccessToken();
         }
-    }else if (t){
-
     }
-    }
+}
 $('#addNewShoeButton').click(function () {
 
     const accessToken = localStorage.getItem('accessToken');
@@ -566,8 +568,10 @@ $('#addNewShoeButton').click(function () {
                 select.append(option);
             });
         },
-        error: function(error) {
+        error: async function (error) {
             console.error('Error fetching Item IDs:', error);
+            await refreshAccessToken();
+            await $('#addNewShoeButton').click();
         }
     });
 

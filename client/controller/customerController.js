@@ -163,6 +163,9 @@ async function submitCustomerForm(customer, type) {
                     showConfirmButton: false,
                     timer: 1500
                 });
+
+                await refreshAccessToken();
+
             }
         } catch (error) {
             console.error("Request failed:", error);
@@ -201,6 +204,8 @@ async function submitCustomerForm(customer, type) {
                     timer: 1500
                 });
 
+                await refreshAccessToken();
+
             }
 
         } catch (error) {
@@ -214,7 +219,6 @@ async function submitCustomerForm(customer, type) {
     }
 
 }
-
 
 async function searchCustomer(customerId) {
 
@@ -407,8 +411,11 @@ const loadCustomers = () => {
                 attachEventListeners();
 
             },
-            error: function (xhr, status, error) {
+            error: async function (xhr, status, error) {
                 console.error('Something Error');
+
+                await refreshAccessToken();
+                await loadCustomers();
             }
         });
 
@@ -561,3 +568,25 @@ $('#search_input').keypress(function (e) {
     }
 });
 
+async function refreshAccessToken() {
+    try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        const response = await $.ajax({
+            type: "POST",
+            url: "http://localhost:8081/helloShoesPVT/api/v1/auth/refresh",
+            data: JSON.stringify({
+                refreshToken: refreshToken
+            }),
+            contentType: "application/json"
+        });
+
+        const newTokenString = response.token;
+        const [newAccessToken, newRefreshToken] = newTokenString.split(':').map(token => token.trim());
+
+        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+    } catch (error) {
+        console.error("Refreshing access token failed:", error);
+        // Redirect to login page or handle the error appropriately
+    }
+}

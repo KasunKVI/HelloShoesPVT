@@ -75,8 +75,9 @@ const loadEmployees = () => {
             attachEventListenersEmployee()
 
         },
-        error: function (xhr, status, error) {
+        error: async function (xhr, status, error) {
             console.error('Something Error');
+            await refreshAccessToken();
         }
     });
 
@@ -360,6 +361,7 @@ async function submitEmployeeForm(employee, type) {
                     showConfirmButton: false,
                     timer: 1500
                 });
+
             }
         } catch (error) {
             console.error("Request failed:", error);
@@ -368,6 +370,8 @@ async function submitEmployeeForm(employee, type) {
                 title: "Oops...",
                 text:  "You have no access to add new employee."
             });
+
+            await refreshAccessToken();
         }
     }else {
         try {
@@ -409,6 +413,8 @@ async function submitEmployeeForm(employee, type) {
                 title: "Oops...",
                 text: error.responseJSON ? error.responseJSON.message : "You have no access to Update this Employee"
             });
+
+            await refreshAccessToken();
         }
     }
 
@@ -571,6 +577,8 @@ const attachEventListenersEmployee = () => {
                         title: "Oops...",
                         text: "You have no access to Delete this Employee!",
                     });
+
+                    await refreshAccessToken();
                 }
 
 
