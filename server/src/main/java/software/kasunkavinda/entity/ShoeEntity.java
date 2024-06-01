@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.kasunkavinda.enums.Size;
 
 import java.util.List;
 
@@ -16,12 +15,13 @@ import java.util.List;
 public class ShoeEntity implements SuperEntity{
 
     @Id
+    @Column(name = "shoe_id")
     private String shoe_id;
     private String description;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String picture;
     private int qty;
-    private String category;
-    private Size size;
     private double bought_price;
     private double sell_price;
 
