@@ -481,6 +481,7 @@ async function submitInventoryForm(inventory, type) {
                 loadInventoryTable();
                 clearShoeAddForm();
                 clearAccessoriesAddForm();
+                $(".btn-close").click();
 
             } else {
                 Swal.fire({

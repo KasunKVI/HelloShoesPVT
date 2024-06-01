@@ -162,24 +162,7 @@ $("#create_new_account_btn").click(async function (event) {
 function hashPassword(password) {
     return sha256(password);
 }
-function validateField(field, pattern) {
-    if (!pattern.test(field.val().trim())) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
-        return true;
-    }
-}
-function validateNotEmpty(field) {
-    if (!field.val().trim()) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
-        return true;
-    }
-}
+
 $('#signUp_nic').on('input', async function (event) {
 
     let isValid = validateField($(this), nicPattern);

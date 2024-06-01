@@ -18,15 +18,15 @@ function validLogin() {
 
     return isValidLogins;
 }
-function validateField(field, pattern) {
-    if (!pattern.test(field.val().trim())) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
-        return true;
-    }
-}
+// function validateField(field, pattern) {
+//     if (!pattern.test(field.val().trim())) {
+//         field.removeClass('is-valid').addClass('is-invalid');
+//         return false;
+//     } else {
+//         field.removeClass('is-invalid').addClass('is-valid');
+//         return true;
+//     }
+// }
 
 $("#login_btn").click(async function(event) {
 

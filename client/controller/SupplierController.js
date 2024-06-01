@@ -217,6 +217,7 @@ async function submitSupplierForm(supplier, type) {
 
                  loadSuppliers();
                  clearSupplierAddForm();
+                $(".btn-close").click();
 
             } else {
                 Swal.fire({
@@ -320,26 +321,6 @@ $('#supplier_add_btn').click(function() {
 });
 
 
-
-function validateField(field, pattern) {
-    if (pattern.test(field.val())) {
-        field.removeClass('is-invalid').addClass('is-valid');
-        return true;
-    } else {
-        field.removeClass('is-valid').addClass('is-invalid');
-        return false;
-    }
-}
-
-function validateNotEmpty(field) {
-    if (field.val().trim() !== '') {
-        field.removeClass('is-invalid').addClass('is-valid');
-        return true;
-    } else {
-        field.removeClass('is-valid').addClass('is-invalid');
-        return false;
-    }
-}
 async function searchSupplier(supplierId) {
 
     // Retrieve the access token from localStorage

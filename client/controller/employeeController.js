@@ -285,25 +285,6 @@ function validateEmployeeForm() {
     return isValidEmployee;
 }
 
-function validateField(field, pattern) {
-    if (!pattern.test(field.val())) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
-        return true;
-    }
-}
-
-function validateNotEmpty(field) {
-    if (!field.val()) {
-        field.removeClass('valid').addClass('invalid');
-        return false;
-    } else {
-        field.removeClass('invalid').addClass('valid');
-        return true;
-    }
-}
 $("#employee_btn_clear_add").click(function() {
     // Call the clear update form function
     clearEmployeeAddForm();
@@ -369,6 +350,8 @@ async function submitEmployeeForm(employee, type) {
 
                 loadEmployees();
                 clearEmployeeAddForm();
+
+                $(".btn-close").click();
 
             }else {
                 Swal.fire({
