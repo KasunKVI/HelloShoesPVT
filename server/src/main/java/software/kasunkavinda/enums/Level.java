@@ -1,5 +1,5 @@
 package software.kasunkavinda.enums;
 
 public enum Level {
-    BROWN,SILVER,GOLD,NEW
+    BRONZE,SILVER,GOLD,NEW
 }
