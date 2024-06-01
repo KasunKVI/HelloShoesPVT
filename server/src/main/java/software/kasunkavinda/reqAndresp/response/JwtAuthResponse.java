@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class JwtAuthResponse {
     private String token;
     private String branchId;
+    private String employeeId;
 }
