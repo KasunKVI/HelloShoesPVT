@@ -18,9 +18,10 @@ public class AccessoriesEntity implements SuperEntity{
     @Id
     private String accessories_id;
     private String description;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String picture;
     private int qty;
-    private String category;
     private double bought_price;
     private double sell_price;
 

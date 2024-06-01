@@ -35,7 +35,7 @@ public class Inventory {
             responseDTO.setCode("400");
             responseDTO.setMessage("Item already exists");
             responseDTO.setContent(inventoryDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
         }
         else {
             responseDTO.setCode("200");
