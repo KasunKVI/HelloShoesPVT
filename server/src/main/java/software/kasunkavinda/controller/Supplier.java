@@ -1,6 +1,8 @@
 package software.kasunkavinda.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,81 +23,147 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Supplier  {
 
+    private static final Logger logger = LoggerFactory.getLogger(Supplier.class);
+
     private final SupplierService supplierService;
     private final ResponseDTO responseDTO;
 
-
     @GetMapping("/health")
-    public String healthTest() {
-        return "Supplier Health Good";
+    public ResponseEntity<String> healthTest() {
+        logger.info("Health test endpoint called");
+        return new ResponseEntity<>("Supplier Health Good", HttpStatus.OK);
     }
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity saveSupplier(@RequestBody SupplierDTO supplierDTO){
-
-        String opt = supplierService.saveSupplier(supplierDTO);
-        System.out.println(opt);
-        if (opt.equals("Supplier already exists")){
-            responseDTO.setCode("400");
-            responseDTO.setMessage("Supplier already exists");
-            responseDTO.setContent(supplierDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
-        }else if (opt.equals("Email already exists")){
-            responseDTO.setCode("400");
-            responseDTO.setMessage("Email already exists");
-            responseDTO.setContent(supplierDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
+    public ResponseEntity<?> saveSupplier(@RequestBody SupplierDTO supplierDTO) {
+        logger.info("Saving supplier details");
+        try {
+            String opt = supplierService.saveSupplier(supplierDTO);
+            if (opt.equals("Supplier already exists")) {
+                responseDTO.setCode("400");
+                responseDTO.setMessage("Supplier already exists");
+                responseDTO.setContent(supplierDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.MULTI_STATUS);
+            } else if (opt.equals("Email already exists")) {
+                responseDTO.setCode("400");
+                responseDTO.setMessage("Email already exists");
+                responseDTO.setContent(supplierDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.MULTI_STATUS);
+            } else {
+                responseDTO.setCode("200");
+                responseDTO.setMessage("Supplier saved successfully");
+                responseDTO.setContent(supplierDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+        } catch (Exception exception) {
+            logger.error("Error saving supplier: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        else {
-            responseDTO.setCode("200");
-            responseDTO.setMessage("Supplier saved successfully");
-            responseDTO.setContent(supplierDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.OK);
-        }
-
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<String> getLatestSupplierId() {
-        String latestId = supplierService.getLatestSupplierId();
-        return ResponseEntity.ok(latestId);
+    public ResponseEntity<?> getLatestSupplierId() {
+        logger.info("Fetching latest supplier ID");
+        try {
+            String latestId = supplierService.getLatestSupplierId();
+            return ResponseEntity.ok(latestId);
+        } catch (Exception exception) {
+            logger.error("Error fetching latest supplier ID: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
-    public SupplierDTO getSelectedSupplier(@PathVariable String id){
-        return supplierService.getSelectedSupplier(id);
+    public ResponseEntity<?> getSelectedSupplier(@PathVariable String id) {
+        logger.info("Fetching supplier with ID: {}", id);
+        try {
+            SupplierDTO supplier = supplierService.getSelectedSupplier(id);
+            return ResponseEntity.ok(supplier);
+        } catch (Exception exception) {
+            logger.error("Error fetching supplier by ID: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteSupplier(@PathVariable String id){
-        supplierService.deleteSupplier(id);
+    public ResponseEntity<?> deleteSupplier(@PathVariable String id) {
+        logger.info("Deleting supplier with ID: {}", id);
+        try {
+            supplierService.deleteSupplier(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception exception) {
+            logger.error("Error deleting supplier: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/all")
-    public List<SupplierDTO> getAllSuppliers() {
-        return supplierService.getAllSuppliers();
+    public ResponseEntity<?> getAllSuppliers() {
+        logger.info("Fetching all suppliers");
+        try {
+            List<SupplierDTO> suppliers = supplierService.getAllSuppliers();
+            return ResponseEntity.ok(suppliers);
+        } catch (Exception exception) {
+            logger.error("Error fetching all suppliers: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateSupplier(@RequestBody SupplierDTO supplierDTO) {
-        String resp = supplierService.updateSupplier(supplierDTO);
-        if (resp.equals("Email already exists")) {
-            responseDTO.setCode("400");
-            responseDTO.setMessage("Email already exists");
-            responseDTO.setContent(supplierDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.MULTI_STATUS);
-        } else {
-            responseDTO.setCode("200");
-            responseDTO.setMessage("Supplier updated successfully");
-            responseDTO.setContent(supplierDTO);
-            return new ResponseEntity(responseDTO, HttpStatus.OK);
+    public ResponseEntity<?> updateSupplier(@RequestBody SupplierDTO supplierDTO) {
+        logger.info("Updating supplier");
+        try {
+            String resp = supplierService.updateSupplier(supplierDTO);
+            if (resp.equals("Email already exists")) {
+                responseDTO.setCode("400");
+                responseDTO.setMessage("Email already exists");
+                responseDTO.setContent(supplierDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.MULTI_STATUS);
+            } else {
+                responseDTO.setCode("200");
+                responseDTO.setMessage("Supplier updated successfully");
+                responseDTO.setContent(supplierDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+        } catch (Exception exception) {
+            logger.error("Error updating supplier: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/ids")
-    public List<String> getAllSupplierIds() {
-        return supplierService.getAllSupplierIds();
+    public ResponseEntity<?> getAllSupplierIds() {
+        logger.info("Fetching all supplier IDs");
+        try {
+            List<String> supplierIds = supplierService.getAllSupplierIds();
+            return ResponseEntity.ok(supplierIds);
+        } catch (Exception exception) {
+            logger.error("Error fetching all supplier IDs: ", exception);
+            responseDTO.setCode("500");
+            responseDTO.setMessage("Internal server error");
+            responseDTO.setContent(exception.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
