@@ -1,11 +1,12 @@
 package software.kasunkavinda.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.kasunkavinda.dao.SupplierRepo;
 import software.kasunkavinda.dto.SupplierDTO;
-import software.kasunkavinda.entity.CustomerEntity;
 import software.kasunkavinda.entity.SupplierEntity;
 import software.kasunkavinda.service.SupplierService;
 import software.kasunkavinda.util.Mapping;
@@ -19,43 +20,57 @@ import java.util.stream.Collectors;
 @Transactional
 public class SupplierServiceImpl implements SupplierService {
 
-     private final SupplierRepo supplierRepo;
-     private final Mapping mapper;
+    private final SupplierRepo supplierRepo;
+    private final Mapping mapper;
+    private static final Logger logger = LoggerFactory.getLogger(SupplierServiceImpl.class);
 
     @Override
     public String saveSupplier(SupplierDTO supplierDTO) {
+        logger.info("Attempting to save supplier with ID: {}", supplierDTO.getSupplier_id());
         boolean optional = supplierRepo.existsById(supplierDTO.getSupplier_id());
         boolean emailExists = supplierRepo.existsByEmail(supplierDTO.getEmail());
-        if (optional){
+        if (optional) {
+            logger.warn("Supplier already exists with ID: {}", supplierDTO.getSupplier_id());
             return "Supplier already exists";
-        } else if (emailExists){
+        } else if (emailExists) {
+            logger.warn("Email already exists: {}", supplierDTO.getEmail());
             return "Email already exists";
         } else {
             supplierRepo.save(mapper.toSupplierEntity(supplierDTO));
+            logger.info("Supplier saved successfully with ID: {}", supplierDTO.getSupplier_id());
             return "Supplier saved successfully";
         }
     }
 
     @Override
     public void deleteSupplier(String supplierId) {
+        logger.info("Deleting supplier with ID: {}", supplierId);
         supplierRepo.deleteById(supplierId);
+        logger.info("Supplier deleted successfully with ID: {}", supplierId);
     }
 
     @Override
     public SupplierDTO getSelectedSupplier(String supplierId) {
-        return mapper.toSupplierDTO(supplierRepo.getReferenceById(supplierId));
+        logger.info("Fetching supplier with ID: {}", supplierId);
+        SupplierDTO supplierDTO = mapper.toSupplierDTO(supplierRepo.getReferenceById(supplierId));
+        logger.info("Fetched supplier details: {}", supplierDTO);
+        return supplierDTO;
     }
 
     @Override
     public List<SupplierDTO> getAllSuppliers() {
-        return mapper.toSupplierDtoList(supplierRepo.findAll());
-
+        logger.info("Fetching all suppliers");
+        List<SupplierDTO> supplierDTOs = mapper.toSupplierDtoList(supplierRepo.findAll());
+        logger.info("Fetched all suppliers, total count: {}", supplierDTOs.size());
+        return supplierDTOs;
     }
 
     @Override
     public String updateSupplier(SupplierDTO supplierDTO) {
+        logger.info("Attempting to update supplier with ID: {}", supplierDTO.getSupplier_id());
         Optional<SupplierEntity> existingSupplierOpt = supplierRepo.findById(supplierDTO.getSupplier_id());
         if (!existingSupplierOpt.isPresent()) {
+            logger.warn("Supplier not found with ID: {}", supplierDTO.getSupplier_id());
             return "Supplier not found";
         }
 
@@ -65,6 +80,7 @@ public class SupplierServiceImpl implements SupplierService {
         if (!existSupplier.getEmail().equals(supplierDTO.getEmail())) {
             boolean emailExists = supplierRepo.existsByEmail(supplierDTO.getEmail());
             if (emailExists) {
+                logger.warn("Email already exists: {}", supplierDTO.getEmail());
                 return "Email already exists";
             }
         }
@@ -74,20 +90,27 @@ public class SupplierServiceImpl implements SupplierService {
         updateSupplier.setSupplier_id(existSupplier.getSupplier_id()); // Ensure the ID remains the same
 
         supplierRepo.save(updateSupplier);
+        logger.info("Supplier updated successfully with ID: {}", supplierDTO.getSupplier_id());
         return "Supplier updated successfully";
     }
 
     @Override
     public String getLatestSupplierId() {
+        logger.info("Fetching the latest supplier ID");
         Optional<SupplierEntity> supplier = supplierRepo.findTopByOrderBySupplierIdDesc();
-        return supplier.map(SupplierEntity::getSupplier_id).orElse(null);
+        String latestSupplierId = supplier.map(SupplierEntity::getSupplier_id).orElse(null);
+        logger.info("Fetched latest supplier ID: {}", latestSupplierId);
+        return latestSupplierId;
     }
 
     @Override
     public List<String> getAllSupplierIds() {
+        logger.info("Fetching all supplier IDs");
         List<SupplierEntity> suppliers = supplierRepo.findAll();
-        return suppliers.stream()
+        List<String> supplierIds = suppliers.stream()
                 .map(SupplierEntity::getSupplier_id)
                 .collect(Collectors.toList());
+        logger.info("Fetched all supplier IDs, total count: {}", supplierIds.size());
+        return supplierIds;
     }
 }

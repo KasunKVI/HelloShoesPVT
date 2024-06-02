@@ -3,8 +3,8 @@ package software.kasunkavinda.service.impl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,12 @@ import java.util.Random;
 @Transactional
 public class EmailServiceImpl implements EmailService {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
     private final JavaMailSender mailSender;
 
+    @Override
     public String sendVerificationCode(String recipientEmail) {
+        logger.info("Generating verification code for email: {}", recipientEmail);
 
         // Generate random 5-digit verification code
         String verificationCode = generateVerificationCode();
@@ -80,21 +82,20 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(htmlContent, true); // true indicates HTML content
 
             mailSender.send(message);
+            logger.info("Verification email sent to: {}", recipientEmail);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            logger.error("Failed to send verification email to: {}", recipientEmail, e);
         }
 
         return verificationCode;
     }
 
-
     private String generateVerificationCode() {
         Random random = new Random();
         int min = 10000;
         int max = 99999;
-        return String.valueOf(random.nextInt(max - min + 1) + min);
+        String code = String.valueOf(random.nextInt(max - min + 1) + min);
+        logger.info("Generated verification code: {}", code);
+        return code;
     }
-
-
-
 }

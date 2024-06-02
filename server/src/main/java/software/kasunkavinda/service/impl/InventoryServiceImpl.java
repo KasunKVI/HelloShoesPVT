@@ -1,6 +1,8 @@
 package software.kasunkavinda.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.kasunkavinda.dao.AccessoriesRepo;
@@ -20,6 +22,8 @@ import java.util.List;
 @Transactional
 public class InventoryServiceImpl implements InventoryService {
 
+    private static final Logger logger = LoggerFactory.getLogger(InventoryServiceImpl.class);
+
     private final ShoeRepo shoeRepo;
     private final AccessoriesRepo accessoriesRepo;
     private final SupplierRepo supplierRepo;
@@ -27,57 +31,58 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public String saveItem(InventoryDTO inventoryDTO) {
-
-            if (inventoryDTO.getType().equals("Shoe")) {
-
-                if (inventoryDTO.getInvt_id() == null) {
-                   return  "Shoe ID must be set before saving";
-                }
-                boolean opt = shoeRepo.existsById(inventoryDTO.getInvt_id());
-                if (opt) {
-                    return "Item already exists";
-                }else {
-                    ShoeEntity shoeEntity = mapper.toShoeEntity(inventoryDTO);
-                    shoeEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
-                    shoeRepo.save(shoeEntity);
-                    return "Item saved successfully";
-                }
-            }else {
-                if (inventoryDTO.getInvt_id() == null) {
-                    return "Shoe ID must be set before saving";
-                }
-                    boolean opt2 = accessoriesRepo.existsById(inventoryDTO.getInvt_id());
-                    if (opt2) {
-                        return "Item already exists";
-                    }else {
-
-                            AccessoriesEntity accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
-                            accessoryEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
-                            accessoriesRepo.save(accessoryEntity);
-                            return "Item saved successfully";
-                        }
-
-
+        if (inventoryDTO.getType().equals("Shoe")) {
+            if (inventoryDTO.getInvt_id() == null) {
+                return "Shoe ID must be set before saving";
+            }
+            boolean opt = shoeRepo.existsById(inventoryDTO.getInvt_id());
+            if (opt) {
+                return "Item already exists";
+            } else {
+                ShoeEntity shoeEntity = mapper.toShoeEntity(inventoryDTO);
+                shoeEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
+                shoeRepo.save(shoeEntity);
+                logger.info("Shoe item saved successfully: {}", inventoryDTO.getInvt_id());
+                return "Item saved successfully";
+            }
+        } else {
+            if (inventoryDTO.getInvt_id() == null) {
+                return "Accessory ID must be set before saving";
+            }
+            boolean opt2 = accessoriesRepo.existsById(inventoryDTO.getInvt_id());
+            if (opt2) {
+                return "Item already exists";
+            } else {
+                AccessoriesEntity accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
+                accessoryEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
+                accessoriesRepo.save(accessoryEntity);
+                logger.info("Accessory item saved successfully: {}", inventoryDTO.getInvt_id());
+                return "Item saved successfully";
+            }
         }
     }
 
     @Override
     public void deleteItem(String itemId) {
-
-        if (itemId.startsWith("ACC")){
-                accessoriesRepo.deleteById(itemId);
-        }else {
+        if (itemId.startsWith("ACC")) {
+            accessoriesRepo.deleteById(itemId);
+            logger.info("Accessory item deleted: {}", itemId);
+        } else {
             shoeRepo.deleteById(itemId);
+            logger.info("Shoe item deleted: {}", itemId);
         }
-
     }
 
     @Override
     public InventoryDTO getSelectedItem(String itemId) {
-        if (itemId.startsWith("ACC")){
-                return mapper.accessoryToInventoryDto(accessoriesRepo.getReferenceById(itemId));
-        }else {
-            return mapper.shoeToInventoryDTO(shoeRepo.getReferenceById(itemId));
+        if (itemId.startsWith("ACC")) {
+            AccessoriesEntity accessoryEntity = accessoriesRepo.getReferenceById(itemId);
+            logger.info("Accessory item retrieved: {}", itemId);
+            return mapper.accessoryToInventoryDto(accessoryEntity);
+        } else {
+            ShoeEntity shoeEntity = shoeRepo.getReferenceById(itemId);
+            logger.info("Shoe item retrieved: {}", itemId);
+            return mapper.shoeToInventoryDTO(shoeEntity);
         }
     }
 
@@ -85,20 +90,22 @@ public class InventoryServiceImpl implements InventoryService {
     public List<InventoryDTO> getAllItems() {
         List<AccessoriesEntity> accessories = accessoriesRepo.findAll();
         List<ShoeEntity> shoes = shoeRepo.findAll();
+        logger.info("All items retrieved. Accessories count: {}, Shoes count: {}", accessories.size(), shoes.size());
         return mapper.toInventoryDTOList(shoes, accessories);
     }
 
     @Override
     public String updateItem(InventoryDTO inventoryDTO) {
-
         if (inventoryDTO.getType().equals("Shoe")) {
             ShoeEntity shoeEntity = mapper.toShoeEntity(inventoryDTO);
             shoeEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
             shoeRepo.save(shoeEntity);
-        }else {
+            logger.info("Shoe item updated successfully: {}", inventoryDTO.getInvt_id());
+        } else {
             AccessoriesEntity accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
             accessoryEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
             accessoriesRepo.save(accessoryEntity);
+            logger.info("Accessory item updated successfully: {}", inventoryDTO.getInvt_id());
         }
         return "Item updated successfully";
     }
