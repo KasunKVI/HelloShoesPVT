@@ -31,6 +31,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public String saveItem(InventoryDTO inventoryDTO) {
+
+        System.out.println(inventoryDTO);
+
         if (inventoryDTO.getType().equals("Shoe")) {
             if (inventoryDTO.getInvt_id() == null) {
                 return "Shoe ID must be set before saving";
