@@ -519,7 +519,7 @@ function loadSuppliers() {
 
             response.map((supplier, index) => {
 
-                let tbl_row = `<tr data-employee-id=${supplier.supplier_id}>
+                let tbl_row = `<tr data-supplier-id=${supplier.supplier_id}>
                     <td class="supplier_id"><p>${supplier.supplier_id}</p></td>
                     <td class="supplier_name"><p class="text-xs font-weight-bold mb-0">${supplier.name}</p></td>
                     <td class="supplier_designation align-middle text-center text-sm"><span class="badge badge-sm bg-gradient-success">${supplier.category}</span></td>
