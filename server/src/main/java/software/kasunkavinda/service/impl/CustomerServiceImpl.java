@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import software.kasunkavinda.dao.CustomerRepo;
 import software.kasunkavinda.dto.CustomerDTO;
 import software.kasunkavinda.entity.CustomerEntity;
+import software.kasunkavinda.exception.GlobalExceptionHandler;
+import software.kasunkavinda.exception.NotFoundException;
+import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.CustomerService;
 import software.kasunkavinda.util.Mapping;
 
@@ -31,10 +34,10 @@ public class CustomerServiceImpl implements CustomerService {
         boolean emailExists = customerRepo.existsByEmail(customerDTO.getEmail());
         if (opt) {
             logger.warn("Customer already exists: {}", customerDTO.getCustomer_id());
-            return "Customer already exists";
+            throw new QuantityExceededException("Customer already exists");
         } else if (emailExists) {
             logger.warn("Email already exists: {}", customerDTO.getEmail());
-            return "Email already exists";
+            throw new QuantityExceededException("Email already exists");
         } else {
             mapper.toCustomerDTO(customerRepo.save(mapper.toCustomerEntity(customerDTO)));
             logger.info("Customer saved successfully: {}", customerDTO.getCustomer_id());
@@ -52,7 +55,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO getSelectedCustomer(String customerId) {
         logger.info("Fetching customer: {}", customerId);
-        return mapper.toCustomerDTO(customerRepo.getReferenceById(customerId));
+        CustomerEntity customer = customerRepo.findById(customerId)
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
+        return mapper.toCustomerDTO(customer);
     }
 
     @Override
@@ -68,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<CustomerEntity> existingCustomerOpt = customerRepo.findById(customerDTO.getCustomer_id());
         if (!existingCustomerOpt.isPresent()) {
             logger.warn("Customer not found: {}", customerDTO.getCustomer_id());
-            return "Customer not found";
+            throw new NotFoundException("Customer not found");
         }
 
         CustomerEntity existingCustomer = existingCustomerOpt.get();
@@ -78,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
             boolean emailExists = customerRepo.existsByEmail(customerDTO.getEmail());
             if (emailExists) {
                 logger.warn("Email already exists: {}", customerDTO.getEmail());
-                return "Email already exists";
+                throw new QuantityExceededException("Email already exists");
             }
         }
 

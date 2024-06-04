@@ -12,6 +12,8 @@ import software.kasunkavinda.dao.SupplierRepo;
 import software.kasunkavinda.dto.InventoryDTO;
 import software.kasunkavinda.entity.AccessoriesEntity;
 import software.kasunkavinda.entity.ShoeEntity;
+import software.kasunkavinda.exception.NotFoundException;
+import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.InventoryService;
 import software.kasunkavinda.util.Mapping;
 
@@ -31,16 +33,16 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public String saveItem(InventoryDTO inventoryDTO) {
-
-        System.out.println(inventoryDTO);
+        logger.info("Saving item with ID: {}", inventoryDTO.getInvt_id());
 
         if (inventoryDTO.getType().equals("Shoe")) {
             if (inventoryDTO.getInvt_id() == null) {
-                return "Shoe ID must be set before saving";
+                throw new IllegalArgumentException("Shoe ID must be set before saving");
             }
-            boolean opt = shoeRepo.existsById(inventoryDTO.getInvt_id());
-            if (opt) {
-                return "Item already exists";
+            boolean itemExists = shoeRepo.existsById(inventoryDTO.getInvt_id());
+            if (itemExists) {
+                logger.warn("Item already exists with ID: {}", inventoryDTO.getInvt_id());
+                throw new QuantityExceededException("Item already exists");
             } else {
                 ShoeEntity shoeEntity = mapper.toShoeEntity(inventoryDTO);
                 shoeEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
@@ -50,11 +52,12 @@ public class InventoryServiceImpl implements InventoryService {
             }
         } else {
             if (inventoryDTO.getInvt_id() == null) {
-                return "Accessory ID must be set before saving";
+                throw new IllegalArgumentException("Accessory ID must be set before saving");
             }
-            boolean opt2 = accessoriesRepo.existsById(inventoryDTO.getInvt_id());
-            if (opt2) {
-                return "Item already exists";
+            boolean itemExists = accessoriesRepo.existsById(inventoryDTO.getInvt_id());
+            if (itemExists) {
+                logger.warn("Item already exists with ID: {}", inventoryDTO.getInvt_id());
+                throw new QuantityExceededException("Item already exists");
             } else {
                 AccessoriesEntity accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
                 accessoryEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
@@ -67,10 +70,17 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void deleteItem(String itemId) {
+        logger.info("Deleting item with ID: {}", itemId);
         if (itemId.startsWith("ACC")) {
+            if (!accessoriesRepo.existsById(itemId)) {
+                throw new NotFoundException("Accessory not found with ID: " + itemId);
+            }
             accessoriesRepo.deleteById(itemId);
             logger.info("Accessory item deleted: {}", itemId);
         } else {
+            if (!shoeRepo.existsById(itemId)) {
+                throw new NotFoundException("Shoe not found with ID: " + itemId);
+            }
             shoeRepo.deleteById(itemId);
             logger.info("Shoe item deleted: {}", itemId);
         }
@@ -78,12 +88,15 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryDTO getSelectedItem(String itemId) {
+        logger.info("Fetching item with ID: {}", itemId);
         if (itemId.startsWith("ACC")) {
-            AccessoriesEntity accessoryEntity = accessoriesRepo.getReferenceById(itemId);
+            AccessoriesEntity accessoryEntity = accessoriesRepo.findById(itemId)
+                    .orElseThrow(() -> new NotFoundException("Accessory not found with ID: " + itemId));
             logger.info("Accessory item retrieved: {}", itemId);
             return mapper.accessoryToInventoryDto(accessoryEntity);
         } else {
-            ShoeEntity shoeEntity = shoeRepo.getReferenceById(itemId);
+            ShoeEntity shoeEntity = shoeRepo.findById(itemId)
+                    .orElseThrow(() -> new NotFoundException("Shoe not found with ID: " + itemId));
             logger.info("Shoe item retrieved: {}", itemId);
             return mapper.shoeToInventoryDTO(shoeEntity);
         }
@@ -99,13 +112,18 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public String updateItem(InventoryDTO inventoryDTO) {
+        logger.info("Updating item with ID: {}", inventoryDTO.getInvt_id());
         if (inventoryDTO.getType().equals("Shoe")) {
-            ShoeEntity shoeEntity = mapper.toShoeEntity(inventoryDTO);
+            ShoeEntity shoeEntity = shoeRepo.findById(inventoryDTO.getInvt_id())
+                    .orElseThrow(() -> new NotFoundException("Shoe not found with ID: " + inventoryDTO.getInvt_id()));
+            shoeEntity = mapper.toShoeEntity(inventoryDTO);
             shoeEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
             shoeRepo.save(shoeEntity);
             logger.info("Shoe item updated successfully: {}", inventoryDTO.getInvt_id());
         } else {
-            AccessoriesEntity accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
+            AccessoriesEntity accessoryEntity = accessoriesRepo.findById(inventoryDTO.getInvt_id())
+                    .orElseThrow(() -> new NotFoundException("Accessory not found with ID: " + inventoryDTO.getInvt_id()));
+            accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
             accessoryEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
             accessoriesRepo.save(accessoryEntity);
             logger.info("Accessory item updated successfully: {}", inventoryDTO.getInvt_id());

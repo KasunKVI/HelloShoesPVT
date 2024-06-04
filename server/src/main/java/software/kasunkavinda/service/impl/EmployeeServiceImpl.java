@@ -10,6 +10,8 @@ import software.kasunkavinda.dao.EmployeeRepo;
 import software.kasunkavinda.dto.EmployeeDTO;
 import software.kasunkavinda.entity.BranchEntity;
 import software.kasunkavinda.entity.EmployeeEntity;
+import software.kasunkavinda.exception.NotFoundException;
+import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.EmployeeService;
 import software.kasunkavinda.util.Mapping;
 
@@ -37,14 +39,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("The given ID must not be null");
         }
 
-        boolean optional = employeeRepo.existsById(employeeDTO.getEmployee_id());
+        boolean employeeExists = employeeRepo.existsById(employeeDTO.getEmployee_id());
         boolean emailExists = employeeRepo.existsByEmail(employeeDTO.getEmail());
-        if (optional) {
+        if (employeeExists) {
             logger.warn("Employee already exists with ID: {}", employeeDTO.getEmployee_id());
-            return "Employee already exists";
+            throw new QuantityExceededException("Employee already exists");
         } else if (emailExists) {
             logger.warn("Email already exists: {}", employeeDTO.getEmail());
-            return "Email already exists";
+            throw new QuantityExceededException("Email already exists");
         } else {
             BranchEntity branchEntity = branchRepo.getReferenceById(employeeDTO.getBranchId());
             EmployeeEntity employeeEntity = mapper.toEmployeeEntity(employeeDTO);
@@ -65,17 +67,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDTO getSelectedEmployee(String employeeId) {
         logger.info("Fetching employee with ID: {}", employeeId);
-        EmployeeDTO employeeDTO = mapper.toEmployeeDTO(employeeRepo.getReferenceById(employeeId));
-        logger.info("Employee fetched successfully with ID: {}", employeeId);
-        return employeeDTO;
+        Optional<EmployeeEntity> employeeOpt = employeeRepo.findById(employeeId);
+        if (employeeOpt.isPresent()) {
+            EmployeeEntity employee = employeeOpt.get();
+            return mapper.toEmployeeDTO(employee);
+        } else {
+            throw new NotFoundException("Employee not found with ID: " + employeeId);
+        }
     }
 
     @Override
     public List<EmployeeDTO> getAllEmployee(String branchId) {
         logger.info("Fetching all employees for branch ID: {}", branchId);
-        List<EmployeeDTO> employeeDTOList = mapper.toEmployeeDtoList(employeeRepo.findAllByBranchId(branchId));
-        logger.info("Fetched {} employees for branch ID: {}", employeeDTOList.size(), branchId);
-        return employeeDTOList;
+        List<EmployeeEntity> employees = employeeRepo.findAllByBranchId(branchId);
+        if (!employees.isEmpty()) {
+            return mapper.toEmployeeDtoList(employees);
+        } else {
+            throw new NotFoundException("No employees found for branch ID: " + branchId);
+        }
     }
 
     @Override
@@ -84,30 +93,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // Check if the employee exists
         Optional<EmployeeEntity> existingEmployeeOpt = employeeRepo.findById(employeeDTO.getEmployee_id());
-        if (!existingEmployeeOpt.isPresent()) {
-            logger.warn("Employee not found with ID: {}", employeeDTO.getEmployee_id());
-            return "Employee not found";
-        }
+        if (existingEmployeeOpt.isPresent()) {
+            EmployeeEntity existingEmployee = existingEmployeeOpt.get();
 
-        EmployeeEntity existingEmployee = existingEmployeeOpt.get();
-
-        // Check if the new email is different and if it already exists in the database
-        if (!existingEmployee.getEmail().equals(employeeDTO.getEmail())) {
-            boolean emailExists = employeeRepo.existsByEmail(employeeDTO.getEmail());
-            if (emailExists) {
-                logger.warn("Email already exists: {}", employeeDTO.getEmail());
-                return "Email already exists";
+            // Check if the new email is different and if it already exists in the database
+            if (!existingEmployee.getEmail().equals(employeeDTO.getEmail())) {
+                boolean emailExists = employeeRepo.existsByEmail(employeeDTO.getEmail());
+                if (emailExists) {
+                    logger.warn("Email already exists: {}", employeeDTO.getEmail());
+                    throw new QuantityExceededException("Email already exists");
+                }
             }
+
+            // Update the employee entity with new values
+            BranchEntity branchEntity = branchRepo.getReferenceById(employeeDTO.getBranchId());
+            EmployeeEntity updatedEmployee = mapper.toEmployeeEntity(employeeDTO);
+            updatedEmployee.setEmployee_id(existingEmployee.getEmployee_id()); // Ensure the ID remains the same
+            updatedEmployee.setBranch(branchEntity);
+            employeeRepo.save(updatedEmployee);
+
+            logger.info("Employee updated successfully with ID: {}", employeeDTO.getEmployee_id());
+            return "Employee updated successfully";
+        } else {
+            throw new NotFoundException("Employee not found with ID: " + employeeDTO.getEmployee_id());
         }
-
-        // Update the employee entity with new values
-        BranchEntity branchEntity = branchRepo.getReferenceById(employeeDTO.getBranchId());
-        EmployeeEntity updatedEmployee = mapper.toEmployeeEntity(employeeDTO);
-        updatedEmployee.setEmployee_id(existingEmployee.getEmployee_id()); // Ensure the ID remains the same
-        updatedEmployee.setBranch(branchEntity);
-        employeeRepo.save(updatedEmployee);
-
-        logger.info("Employee updated successfully with ID: {}", employeeDTO.getEmployee_id());
-        return "Employee updated successfully";
     }
 }

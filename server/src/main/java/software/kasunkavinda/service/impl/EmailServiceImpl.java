@@ -9,6 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.kasunkavinda.exception.MessagingFailureException;
+import software.kasunkavinda.exception.VerificationCodeGenerationException;
 import software.kasunkavinda.service.EmailService;
 
 import java.util.Random;
@@ -85,6 +87,7 @@ public class EmailServiceImpl implements EmailService {
             logger.info("Verification email sent to: {}", recipientEmail);
         } catch (MessagingException e) {
             logger.error("Failed to send verification email to: {}", recipientEmail, e);
+            throw new MessagingFailureException("Failed to send verification email.");
         }
 
         return verificationCode;
@@ -96,6 +99,9 @@ public class EmailServiceImpl implements EmailService {
         int max = 99999;
         String code = String.valueOf(random.nextInt(max - min + 1) + min);
         logger.info("Generated verification code: {}", code);
+        if (code.length() != 5) {
+            throw new VerificationCodeGenerationException("Failed to generate verification code.");
+        }
         return code;
     }
 }
