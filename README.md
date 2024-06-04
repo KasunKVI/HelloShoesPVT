@@ -80,7 +80,7 @@ You can find the ER diagram [here](https://drive.google.com/file/d/1tya1W3eI-0px
 
 ## Class Diagram
 
-You can find the class diagram [here](class_diagram_link).
+You can find the class diagram [here](https://drive.google.com/file/d/1oZZ2gyZpuUnSQ7YAvlJSdEqF5IwoYoTJ/view?usp=sharing).
 
 ## Client Directory
 
