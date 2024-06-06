@@ -18,10 +18,20 @@ public class BranchEntity implements SuperEntity {
     private String branch_id;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "branch_shoes",
+            joinColumns = @JoinColumn(name = "branch_id"),
+            inverseJoinColumns = @JoinColumn(name = "shoe_id")
+    )
     private List<ShoeEntity> shoes;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "branch_accessories",
+            joinColumns = @JoinColumn(name = "branch_id"),
+            inverseJoinColumns = @JoinColumn(name = "accessories_id")
+    )
     private List<AccessoriesEntity> accessories;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)

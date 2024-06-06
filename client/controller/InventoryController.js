@@ -76,7 +76,39 @@ function validateShoeAddForm() {
 }
 
 
-function loadInventoryTable() {
+function loadAllBranches() {
+
+    // Retrieve the access token from localStorage
+    const accessToken = localStorage.getItem('accessToken');
+
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/branch/all",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        },
+        success: function(response) {
+            let branchSelect = $('#branchSelect');
+            branchSelect.empty();
+            branchSelect.append('<option value="">Select Branch</option>');
+            response.forEach(branch => {
+                branchSelect.append('<option value="' + branch.id + '">' + branch.name + '</option>');
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to load branches');
+        }
+    });
+}
+// Event listener for branch selection
+$('#branchSelect').change(function() {
+    let selectedBranchId = $('#branchSelect').val();
+    console.log(selectedBranchId);
+    loadInventoryTable(selectedBranchId);
+});
+
+
+function loadInventoryTable(branchId) {
 
 
     // Retrieve the access token from localStorage
@@ -86,24 +118,24 @@ function loadInventoryTable() {
     $('#inventory_table_body').empty();
 
     $.ajax({
-        type: "GET",
-        url: "http://localhost:8081/helloShoesPVT/api/v1/inventory",
+        contentType: "application/json",
+        error: async function (xhr, status, error) {
+            console.error('Error loading inventory:', error);
+            await refreshAccessToken();
+        },
         headers: {
             "Authorization": "Bearer " + accessToken
         },
-        contentType: "application/json",
-
         success: function (response) {
-
 
 
             response.map((inventoryItem, index) => {
 
-                if (inventoryItem.qty > 10){
+                if (inventoryItem.qty > 10) {
                     status = "Available"
-                }else if (inventoryItem.qty < 10){
+                } else if (inventoryItem.qty < 10) {
                     status = "Low"
-                }else {
+                } else {
                     status = "Not Available"
                 }
                 // Calculate profit and profit margin
@@ -137,13 +169,13 @@ function loadInventoryTable() {
                 $('#inventory_table_body').append(tbl_row);
             });
 
-             attachEventListenersInventory();
+            loadAllBranches();
+            attachEventListenersInventory();
 
         },
-        error: async function (xhr, status, error) {
-            console.error('Error loading inventory:', error);
-            await refreshAccessToken();
-        }
+
+        type: "GET",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/inventory/all/" + branchId
     });
 }
 
@@ -182,7 +214,6 @@ async function searchInventory(invt_id) {
 
         itemPic = response.picture;
 
-        console.log(response);
         if (invt_id.startsWith("ACC")){
 
             // Populate the form fields with the retrieved customer details
@@ -420,7 +451,7 @@ const attachEventListenersInventory = () => {
                         icon: "success"
                     });
 
-                    loadInventoryTable();
+                    loadInventoryTable(localStorage.getItem('branchId'));
                     clearInventoryUpdateForm();
 
 
@@ -455,6 +486,9 @@ const attachEventListenersInventory = () => {
 async function submitInventoryForm(inventory, type) {
 
     const accessToken = localStorage.getItem('accessToken');
+    const branch_id = localStorage.getItem('branchId');
+
+    inventory.setBranch_id(branch_id);
 
     if (type === "Save") {
 
@@ -479,15 +513,15 @@ async function submitInventoryForm(inventory, type) {
                     timer: 1500
                 });
 
-                loadInventoryTable();
+                loadInventoryTable(localStorage.getItem('branchId'));
                 clearShoeAddForm();
                 clearAccessoriesAddForm();
                 $(".btn-close").click();
 
-            } else {
+            } else if (response.message === "Item already exists") {
                 Swal.fire({
                     icon: "error",
-                    title: response.message,
+                    title: response.message + "Please update the quantity",
                     showConfirmButton: false,
                     timer: 1500
                 });
@@ -526,7 +560,7 @@ async function submitInventoryForm(inventory, type) {
                     timer: 1500
                 });
 
-                loadInventoryTable();
+                loadInventoryTable(localStorage.getItem('branchId'));
                 clearInventoryUpdateForm();
 
             } else {
@@ -661,7 +695,7 @@ function validateNumberField(field) {
 
 
 $("#inventory_link").click(function(event) {
-    loadInventoryTable();
+    loadInventoryTable(localStorage.getItem('branchId'));
 });
 
 $('#shoe_update_close_btn').click(function () {

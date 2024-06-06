@@ -10,7 +10,7 @@ import software.kasunkavinda.service.BranchService;
 import java.util.List;
 
 @RestController
-//@RequestMapping("api/v1/branch")
+@RequestMapping("api/v1/branch")
 @RequiredArgsConstructor
 public class Branch {
 
@@ -22,9 +22,9 @@ public class Branch {
     }
 
 
-//    @GetMapping
-//    public List<BranchDTO> getAllBranches(){
-//        return branchService.getAllBranches();
-//    }
+    @GetMapping("/all")
+    public List<BranchDTO> getAllBranches(){
+        return branchService.getAllBranches();
+    }
 
 }

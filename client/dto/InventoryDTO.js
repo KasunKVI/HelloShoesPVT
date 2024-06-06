@@ -16,6 +16,9 @@ class InventoryDTO {
     setInvt_id(invt_id) {
         this.invt_id = invt_id;
     }
+    setBranch_id(branch_id) {
+        this.branch_id = branch_id;
+    }
 
     getDescription() {
         return this.description;

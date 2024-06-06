@@ -38,4 +38,7 @@ public class InventoryDTO {
     @NotNull(message = "Supplier ID cannot be null")
     private String supplier_id;
 
+    @NotNull(message = "Branch ID cannot be null")
+    private String branch_id;
+
 }

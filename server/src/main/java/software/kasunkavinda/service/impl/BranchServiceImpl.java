@@ -26,4 +26,9 @@ public class BranchServiceImpl implements BranchService {
                 .map(BranchEntity::getName)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<BranchDTO> getAllBranches() {
+        return mapper.toBranchDtoList(branchRepo.findAll());
+    }
 }

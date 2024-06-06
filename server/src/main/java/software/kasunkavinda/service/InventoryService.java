@@ -10,7 +10,7 @@ public interface InventoryService {
     String saveItem(InventoryDTO inventoryDTO);
     void deleteItem(String itemId);
     InventoryDTO getSelectedItem(String itemId);
-    List<InventoryDTO> getAllItems();
+    List<InventoryDTO> getAllItems(String branchId);
     String updateItem(InventoryDTO inventoryDTO);
 
 }

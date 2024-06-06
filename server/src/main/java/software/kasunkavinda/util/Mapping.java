@@ -42,7 +42,15 @@ public class Mapping {
         return  mapper.map(branchEntity, BranchDTO.class);
     }
     public List<BranchDTO> toBranchDtoList(List<BranchEntity> branches) {
-        return mapper.map(branches, List.class);
+
+        List<BranchDTO> branchDTOS = new ArrayList<>();
+        for (BranchEntity branch : branches) {
+            BranchDTO branchDTO = new BranchDTO();
+            branchDTO.setId(branch.getBranch_id());
+            branchDTO.setName(branch.getName());
+            branchDTOS.add(branchDTO);
+        }
+        return branchDTOS;
     }
 
     public EmployeeEntity toEmployeeEntity(EmployeeDTO employeeDTO) {
@@ -181,10 +189,28 @@ public class Mapping {
 
         List<InventoryDTO> inventoryDTOS = new ArrayList<>();
         for (ShoeEntity shoe : shoes) {
-            inventoryDTOS.add(new InventoryDTO(shoe.getShoe_id(), shoe.getDescription(), shoe.getPicture(), shoe.getQty(), shoe.getBought_price(), shoe.getSell_price(), "Shoe",shoe.getSupplier().getSupplier_id()));
+            InventoryDTO inventoryDTO = new InventoryDTO();
+            inventoryDTO.setInvt_id(shoe.getShoe_id());
+            inventoryDTO.setQty(shoe.getQty());
+            inventoryDTO.setDescription(shoe.getDescription());
+            inventoryDTO.setPicture(shoe.getPicture());
+            inventoryDTO.setSell_price(shoe.getSell_price());
+            inventoryDTO.setBought_price(shoe.getBought_price());
+            inventoryDTO.setSupplier_id(shoe.getSupplier().getSupplier_id());
+            inventoryDTO.setType("Shoe");
+            inventoryDTOS.add(inventoryDTO);
         }
         for (AccessoriesEntity accessory : accessories) {
-            inventoryDTOS.add(new InventoryDTO(accessory.getAccessories_id(), accessory.getDescription(), accessory.getPicture(), accessory.getQty(), accessory.getBought_price(), accessory.getSell_price(), "Accessory",accessory.getSupplier().getSupplier_id() ));
+            InventoryDTO inventoryDTO = new InventoryDTO();
+            inventoryDTO.setInvt_id(accessory.getAccessories_id());
+            inventoryDTO.setQty(accessory.getQty());
+            inventoryDTO.setDescription(accessory.getDescription());
+            inventoryDTO.setPicture(accessory.getPicture());
+            inventoryDTO.setSell_price(accessory.getSell_price());
+            inventoryDTO.setBought_price(accessory.getBought_price());
+            inventoryDTO.setSupplier_id(accessory.getSupplier().getSupplier_id());
+            inventoryDTO.setType("Accessory");
+            inventoryDTOS.add(inventoryDTO);
         }
         return inventoryDTOS;
     }

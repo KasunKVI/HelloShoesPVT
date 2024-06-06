@@ -57,11 +57,11 @@ public class Inventory {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllInventory() {
+    @GetMapping("/all/{branchId}")
+    public ResponseEntity<?> getAllInventory(@PathVariable String branchId) {
         logger.info("Fetching all inventory items");
         try {
-            List<InventoryDTO> inventoryList = inventoryService.getAllItems();
+            List<InventoryDTO> inventoryList = inventoryService.getAllItems(branchId);
             return new ResponseEntity<>(inventoryList, HttpStatus.OK);
         } catch (Exception exception) {
             logger.error("Error fetching all inventory items: ", exception);

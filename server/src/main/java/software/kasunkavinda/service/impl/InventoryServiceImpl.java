@@ -5,18 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.kasunkavinda.dao.AccessoriesRepo;
-import software.kasunkavinda.dao.CustomerRepo;
-import software.kasunkavinda.dao.ShoeRepo;
-import software.kasunkavinda.dao.SupplierRepo;
+import software.kasunkavinda.dao.*;
 import software.kasunkavinda.dto.InventoryDTO;
 import software.kasunkavinda.entity.AccessoriesEntity;
+import software.kasunkavinda.entity.BranchEntity;
 import software.kasunkavinda.entity.ShoeEntity;
 import software.kasunkavinda.exception.NotFoundException;
 import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.InventoryService;
 import software.kasunkavinda.util.Mapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,11 +28,17 @@ public class InventoryServiceImpl implements InventoryService {
     private final ShoeRepo shoeRepo;
     private final AccessoriesRepo accessoriesRepo;
     private final SupplierRepo supplierRepo;
+    private final BranchRepo branchRepo;
     private final Mapping mapper;
 
     @Override
     public String saveItem(InventoryDTO inventoryDTO) {
+
         logger.info("Saving item with ID: {}", inventoryDTO.getInvt_id());
+        BranchEntity branchEntity = branchRepo.findById(inventoryDTO.getBranch_id())
+                .orElseThrow(() -> new NotFoundException("Branch not found with ID: " + inventoryDTO.getBranch_id()));
+        List<BranchEntity> branches = new ArrayList<>();
+        branches.add(branchEntity);
 
         if (inventoryDTO.getType().equals("Shoe")) {
             if (inventoryDTO.getInvt_id() == null) {
@@ -42,11 +47,19 @@ public class InventoryServiceImpl implements InventoryService {
             boolean itemExists = shoeRepo.existsById(inventoryDTO.getInvt_id());
             if (itemExists) {
                 logger.warn("Item already exists with ID: {}", inventoryDTO.getInvt_id());
-                throw new QuantityExceededException("Item already exists");
+                return  "Item already exists";
+
             } else {
+
                 ShoeEntity shoeEntity = mapper.toShoeEntity(inventoryDTO);
                 shoeEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
+                shoeEntity.setBranches(branches);
+
+                // Add shoe to branch entity
+                branchEntity.getShoes().add(shoeEntity);
                 shoeRepo.save(shoeEntity);
+                branchRepo.save(branchEntity);
+
                 logger.info("Shoe item saved successfully: {}", inventoryDTO.getInvt_id());
                 return "Item saved successfully";
             }
@@ -57,11 +70,17 @@ public class InventoryServiceImpl implements InventoryService {
             boolean itemExists = accessoriesRepo.existsById(inventoryDTO.getInvt_id());
             if (itemExists) {
                 logger.warn("Item already exists with ID: {}", inventoryDTO.getInvt_id());
-                throw new QuantityExceededException("Item already exists");
+                return "Item already exists";
             } else {
                 AccessoriesEntity accessoryEntity = mapper.toAccessoryEntity(inventoryDTO);
                 accessoryEntity.setSupplier(supplierRepo.getReferenceById(inventoryDTO.getSupplier_id()));
+                accessoryEntity.setBranches(branches);
+
+                // Add accessory to branch entity
+                branchEntity.getAccessories().add(accessoryEntity);
                 accessoriesRepo.save(accessoryEntity);
+                branchRepo.save(branchEntity); // Ensure both entities are saved
+
                 logger.info("Accessory item saved successfully: {}", inventoryDTO.getInvt_id());
                 return "Item saved successfully";
             }
@@ -103,9 +122,9 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public List<InventoryDTO> getAllItems() {
-        List<AccessoriesEntity> accessories = accessoriesRepo.findAll();
-        List<ShoeEntity> shoes = shoeRepo.findAll();
+    public List<InventoryDTO> getAllItems(String branchId) {
+        List<AccessoriesEntity> accessories = accessoriesRepo.findAllAccessoriesByBranchId(branchId);
+        List<ShoeEntity> shoes = shoeRepo.findAllShoesByBranchId(branchId);
         logger.info("All items retrieved. Accessories count: {}, Shoes count: {}", accessories.size(), shoes.size());
         return mapper.toInventoryDTOList(shoes, accessories);
     }

@@ -25,10 +25,10 @@ public class ShoeEntity implements SuperEntity{
     private double bought_price;
     private double sell_price;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private SupplierEntity supplier;
 
-    @ManyToMany(mappedBy = "shoes")
+    @ManyToMany(mappedBy = "shoes", cascade = CascadeType.MERGE)
     private List<BranchEntity> branches;
 
     @OneToMany(mappedBy = "shoeEntity", cascade = CascadeType.ALL)
