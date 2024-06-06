@@ -128,7 +128,30 @@ public class Mapping {
         return  mapper.map(orderEntity, OrderDTO.class);
     }
     public List<OrderDTO> toOrderDtoList(List<OrderEntity> orders) {
-        return mapper.map(orders, List.class);
+
+
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        for (OrderEntity order : orders) {
+
+            String refundId = "";
+            if (order.getRefund() != null) {
+                refundId = order.getRefund().getRefund_id();
+            }
+
+            System.out.println(refundId);
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setOrder_id(order.getOrder_id());
+            orderDTO.setDate(order.getDate());
+            orderDTO.setPoints(order.getPoints());
+            orderDTO.setPayment_method(order.getPayment_method());
+            orderDTO.setTotal(order.getTotal());
+            orderDTO.setRefund_id(refundId);
+            orderDTOS.add(orderDTO);
+
+        }
+        return orderDTOS;
+
+//        return mapper.map(orders, List.class);
     }
 
     public RefundEntity toRefundEntity(RefundDTO refundDTO) {
