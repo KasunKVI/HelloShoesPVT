@@ -5,6 +5,7 @@ let subtotal = 0;
 
 let shoes = [];
 let accessories = [];
+var isValidCardDetails=true;
 
 $('#item_code_sales').on('input', async function () {
 
@@ -277,14 +278,16 @@ function validCheckoutForm() {
             text: 'Please select the payment method'
         });
     }
+    if (selectedPaymentMethod !== "CARD") {
+        if (isNaN(customerPaid) || customerPaid < parseFloat($('#total').text().replace("Rs ", ""))) {
+            isValidOrder = false;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a valid amount'
+            });
+        }
 
-    if (isNaN(customerPaid) || customerPaid < parseFloat($('#total').text().replace("Rs ", ""))) {
-        isValidOrder = false;
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please enter a valid amount'
-        });
     }
 
     return isValidOrder;
@@ -323,91 +326,156 @@ function clearPlaceOrderForm() {
     $('#cart_table_body').empty();
 }
 
-$("#checkout_btn").click(async function (event){
+function CardPaymentDo() {
 
-    const accessToken = localStorage.getItem('accessToken');
 
-    if (validCheckoutForm()) {
+    // Show the modal
+    $('#paymentModal').modal('show');
 
-        shoes = [];
-        accessories = [];
 
-        const orderId = $('#order_id').text();
-        let point = 0;
-        if (subtotal >= 800) {
-            point = 1;
+    document.getElementById('cno').addEventListener('input', function () {
+        var cardNumber = this.value.replace(/\s/g, ''); // Remove spaces from card number
+        var visaPattern = /^4/; // Visa starts with 4
+        var mastercardPattern = /^5[1-5]/; // MasterCard starts with 51 to 55
+
+        var cardImage = document.getElementById('cardImage');
+        if (visaPattern.test(cardNumber)) {
+            cardImage.src = 'https://img.icons8.com/color/48/000000/visa.png'; // Set Visa image
+            isValidCardDetails = true;
+        } else if (mastercardPattern.test(cardNumber)) {
+            cardImage.src = 'https://img.icons8.com/color/48/000000/mastercard-logo.png'; // Set MasterCard image
+            isValidCardDetails = true;
+        } else {
+            cardImage.src = ''; // If neither Visa nor MasterCard, set empty source
+            isValidCardDetails = false;
         }
+    });
+}
 
-        const branchId = localStorage.getItem('branchId');
-        const employeeId = localStorage.getItem('employeeId');
+$("#payment_btn").click( function(){
 
-        $('#cart_table_body tr').each(function () {
-            // Extract item ID and quantity from the current row
-            const id = $(this).find('.item_id').text();
-            const qty = parseInt($(this).find('.item_qty .fw-semibold').text());
-
-            if (id.startsWith("ACC")) {
-                accessories.push({id, qty});
-            } else {
-                shoes.push({id, qty});
-            }
-
+    if (isValidCardDetails){
+        Swal.fire({
+            icon: "success",
+            title: "Payment Success",
+            showConfirmButton: false,
+            timer: 1500
         });
 
-        // Get the selected payment method
-        const selectedPaymentMethod = $("input[name='pay-method']:checked").val();
+        placeOrder().then(r => $(".close").click());
 
-        const order = new OrderDTO(orderId, new Date().toISOString(), parseFloat($('#total').text().replace("Rs ", "")), selectedPaymentMethod, point, $('#billing-nic').val(), employeeId, branchId, shoes, accessories);
-
-        try {
-
-            const response = await $.ajax({
-                type: "POST",
-                url: "http://localhost:8081/helloShoesPVT/api/v1/order/save",
-                headers: {
-                    "Authorization": "Bearer " + accessToken
-                },
-                data: JSON.stringify(order),
-                contentType: "application/json"
-            });
-
-
-            // Assuming the response has a 'message' property
-            if (response.message === "Order placed successfully") {
-                // Show a success message
-                Swal.fire({
-                    icon: "success",
-                    title: response.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-
-                clearPlaceOrderForm();
-
-
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: response.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        } catch (error) {
-            console.error("Request failed:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something Error."
-            });
-
-            await refreshAccessToken();
-            await $("#checkout_btn").click();
-        }
+    }else {
+        Swal.fire({
+            icon: "error",
+            title: "Please Insert Details Correctly",
+            showConfirmButton: false,
+            timer: 1500
+        });
     }
 
 });
 
+
+    $("#checkout_btn").click(async function (event){
+
+
+
+    if (validCheckoutForm()) {
+
+        // Get the selected payment method
+        const selectedPaymentMethod = $("input[name='pay-method']:checked").val();
+
+        if (selectedPaymentMethod === "CARD") {
+            CardPaymentDo()
+        }
+        else {
+
+            await placeOrder();
+        }
+
+
+    }
+
+});
+
+
+async function placeOrder() {
+
+    const accessToken = localStorage.getItem('accessToken');
+
+    shoes = [];
+    accessories = [];
+
+    const orderId = $('#order_id').text();
+    let point = 0;
+    if (subtotal >= 800) {
+        point = 1;
+    }
+
+    const branchId = localStorage.getItem('branchId');
+    const employeeId = localStorage.getItem('employeeId');
+
+    $('#cart_table_body tr').each(function () {
+        // Extract item ID and quantity from the current row
+        const id = $(this).find('.item_id').text();
+        const qty = parseInt($(this).find('.item_qty .fw-semibold').text());
+
+        if (id.startsWith("ACC")) {
+            accessories.push({id, qty});
+        } else {
+            shoes.push({id, qty});
+        }
+
+    });
+    const selectedPaymentMethod = $("input[name='pay-method']:checked").val();
+    const order = new OrderDTO(orderId, new Date().toISOString(), parseFloat($('#total').text().replace("Rs ", "")), selectedPaymentMethod, point, $('#billing-nic').val(), employeeId, branchId, shoes, accessories);
+
+    try {
+
+        const response = await $.ajax({
+            type: "POST",
+            url: "http://localhost:8081/helloShoesPVT/api/v1/order/save",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            data: JSON.stringify(order),
+            contentType: "application/json"
+        });
+
+
+        // Assuming the response has a 'message' property
+        if (response.message === "Order placed successfully") {
+            // Show a success message
+            Swal.fire({
+                icon: "success",
+                title: response.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            clearPlaceOrderForm();
+
+
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: response.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    } catch (error) {
+        console.error("Request failed:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something Error."
+        });
+
+        await refreshAccessToken();
+        await $("#checkout_btn").click();
+    }
+}
 $("#dashboard_link").click(async function (event){
     console.log("Load all orders");
     await loadOrders();

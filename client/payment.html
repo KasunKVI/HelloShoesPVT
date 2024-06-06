@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Payment Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-12">
+            <div class="card mx-auto">
+                <p class="heading">PAYMENT DETAILS</p>
+                <form class="card-details ">
+                    <div class="form-group mb-0">
+                        <p class="text-warning mb-0">Card Number</p>
+                        <input type="text" name="card-num" placeholder="1234 5678 9012 3457" size="17" id="cno" minlength="19" maxlength="19">
+                        <img src="https://img.icons8.com/color/48/000000/visa.png" width="64px" height="60px" />
+                    </div>
+
+                    <div class="form-group">
+                        <p class="text-warning mb-0">Cardholder's Name</p> <input type="text" name="name" placeholder="Name" size="17">
+                    </div>
+                    <div class="form-group pt-2">
+                        <div class="row d-flex">
+                            <div class="col-sm-4">
+                                <p class="text-warning mb-0">Expiration</p>
+                                <input type="text" name="exp" placeholder="MM/YYYY" size="7" id="exp" minlength="7" maxlength="7">
+                            </div>
+                            <div class="col-sm-3">
+                                <p class="text-warning mb-0">Cvv</p>
+                                <input type="password" name="cvv" placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3">
+                            </div>
+                            <div class="col-sm-5 pt-0">
+                                <button type="button" class="btn btn-primary" id="payment_btn"><i class="fas fa-arrow-right px-3 py-2"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+<script src="/controller/PaymentController.js"></script>
+<script>
+    document.getElementById('payment_btn').addEventListener('click', function() {
+
+        console.log('Payment button clicked')
+        const mainContent = document.getElementById('mainContent');
+        const newContentContainer = document.getElementById('newContentContainer');
+
+        // Hide the new content container
+        newContentContainer.style.display = 'none';
+
+        // Show the main content
+        mainContent.style.display = 'block';
+    });
+</script>
+</body>
+</html>

@@ -53,12 +53,16 @@ public class OrderServiceImpl implements OrderService {
             logger.warn("Order ID already exists: {}", order.getOrder_id());
             return "Order ID already exists";
         } else {
-            CustomerEntity customer = customerRepo.findById(order.getCustomer_id())
-                    .orElseThrow(() -> new NotFoundException("Customer not found"));
-            customer.setPoints(customer.getPoints() + order.getPoints());
-            setCustomerLevel(customer);
-            customerRepo.save(customer);
-            logger.info("Customer points updated: {}, New level: {}", customer.getPoints(), customer.getLevel());
+            CustomerEntity customer = null;
+            if (order.getCustomer_id()!=null){
+                customer = customerRepo.findById(order.getCustomer_id())
+                        .orElseThrow(() -> new NotFoundException("Customer not found"));
+                customer.setPoints(customer.getPoints() + order.getPoints());
+                setCustomerLevel(customer);
+                customerRepo.save(customer);
+                logger.info("Customer points updated: {}, New level: {}", customer.getPoints(), customer.getLevel());
+
+            }
 
             EmployeeEntity employee = employeeRepo.findById(order.getEmployee_id())
                     .orElseThrow(() -> new NotFoundException("Employee not found"));
