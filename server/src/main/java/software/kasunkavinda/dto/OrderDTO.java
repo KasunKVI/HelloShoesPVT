@@ -41,6 +41,7 @@ public class OrderDTO {
     @NotEmpty(message = "Branch ID cannot be empty")
     private String branch_id;
 
+    private String refund_id;
 
     private List<ShoeDTO> shoes;
 

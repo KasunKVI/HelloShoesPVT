@@ -10,6 +10,8 @@ import software.kasunkavinda.dto.OrderDTO;
 import software.kasunkavinda.dto.ResponseDTO;
 import software.kasunkavinda.service.OrderService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/order")
 @RequiredArgsConstructor
@@ -38,6 +40,19 @@ public class Order {
             responseDTO.setMessage("Internal server error");
             responseDTO.setContent(exception.getMessage());
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{branchId}")
+    public ResponseEntity<?> getAllOrder(@PathVariable String branchId) {
+        logger.info("Fetching all orders");
+        try {
+            List<OrderDTO> orderList = orderService.getAllOrder(branchId);
+            return ResponseEntity.ok(orderList);
+        } catch (Exception exception) {
+            logger.error("Error fetching all orders: ", exception);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error | Unable to fetch orders.\nMore Details\n" + exception);
         }
     }
 

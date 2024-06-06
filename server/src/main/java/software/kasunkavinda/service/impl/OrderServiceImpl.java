@@ -14,6 +14,7 @@ import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.OrderService;
 import software.kasunkavinda.util.Mapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,6 +38,12 @@ public class OrderServiceImpl implements OrderService {
         logger.info("Fetched latest order ID: {}", latestOrderId);
         return latestOrderId;
     }
+
+    @Override
+    public List<OrderDTO> getAllOrder(String branchId) {
+        return mapper.toOrderDtoList(orderRepo.findAllByBranchId(branchId));
+    }
+
 
     @Override
     public String saveOrder(OrderDTO order) {

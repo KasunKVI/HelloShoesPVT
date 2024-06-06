@@ -407,3 +407,164 @@ $("#checkout_btn").click(async function (event){
     }
 
 });
+
+$("#dashboard_link").click(async function (event){
+    console.log("Load all orders");
+    await loadOrders();
+});
+
+async function loadOrders(){
+    const accessToken = localStorage.getItem('accessToken');
+    const branchId = localStorage.getItem('branchId');
+
+    $('#order_table_body').empty();
+
+    $.ajax({
+        type:"GET",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/order/" + branchId,
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        },
+        contentType: "application/json",
+
+        success: function (response) {
+
+            console.log(response);
+
+            response.map((order, index) => {
+
+                // Parse the joined_date to extract year, month, and date
+                const orderDate = new Date(order.date);
+                const formattedJoinedDate = `${orderDate.getFullYear()}-${orderDate.getMonth() + 1}-${orderDate.getDate()}`;
+                const payment = "Card";
+
+                // Determine button text and styles based on refund_id
+                const refundButtonText = order.refund_id === "" ? "Do" : "Refunded";
+                const refundButtonClass = order.refund_id === "" ? "btn-danger" : "btn-success";
+                const refundButtonDisabled = order.refund_id !== "" ? "disabled" : "";
+
+                let tbl_row =
+                    `<tr data-order-id=${order.order_id}> 
+                <td class="order_id"><p>${order.order_id}</p></td>
+                <td class="order_date"><p class="text-xs font-weight-bold mb-0">${formattedJoinedDate}</p></td>
+                <td class="order_budget"><p class="text-center  mb-0">${order.total}</p></td>
+                <td class="order_payment"><p class="text-center  mb-0">${payment}</p></td>
+            
+            <td class="text-center mb-0">
+                        <div class="btn-reveal-trigger position-static align-middle">
+                            <button class="refund_btn btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10 ${refundButtonClass}" type="button" ${refundButtonDisabled} data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">${refundButtonText}</button>
+                        </div>
+                    </td>
+         </tr>`;
+
+                $('#order_table_body').append(tbl_row);
+            });
+
+             attachEventListenersOrders();
+
+        },
+        error: function (xhr, status, error) {
+            console.error('Something Error');
+        }
+    });
+}
+
+function searchOrder(order_id) {
+
+}
+
+const attachEventListenersOrders = () => {
+
+    const employeeId = localStorage.getItem('employeeId');
+    const accessToken = localStorage.getItem('accessToken');
+
+    // Event listener for view action
+    $('.refund_btn').click(function (e) {
+
+        e.preventDefault();
+        const orderRow = $(this).closest('tr');
+        const orderId = orderRow.data('order-id');
+        const orderDate = new Date(orderRow.data('order-date'));
+        const currentDate = new Date();
+
+        // Calculate the difference in days between the current date and the order date
+        const timeDifference = currentDate.getTime() - orderDate.getTime();
+        const dayDifference = timeDifference / (1000 * 3600 * 24);
+
+        const refund = new RefundDTO(orderId,currentDate,employeeId)
+
+        if (dayDifference > 3) {
+            Swal.fire({
+                icon: "error",
+                title: "Refund Not Allowed",
+                text: "Refunds can only be processed within three days of the order date.",
+            });
+            return;
+        }
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, refund it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: true
+        }).then(async (result) => {
+
+            if (result.isConfirmed) {
+
+                try {
+                    const response = await $.ajax({
+                        type: "POST",
+                        url: "http://localhost:8081/helloShoesPVT/api/v1/refund",
+                        headers: {
+                            "Authorization": "Bearer " + accessToken
+                        },
+                        data: JSON.stringify(refund),
+                        contentType: "application/json"
+                    });
+
+                    swalWithBootstrapButtons.fire({
+                        title: "Refunded!",
+                        text: "Order has been refunded.",
+                        icon: "success"
+                    });
+
+                    await loadOrders();
+
+                } catch (error) {
+                    console.error("Request failed:", error);
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "You have no access to make refund for this Order!",
+                    });
+                }
+
+
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire({
+                    title: "Cancelled",
+                    text: "Order is safe :)",
+                    icon: "error"
+                });
+            }
+        });
+
+        searchOrder(orderId);
+
+
+
+    });
+};

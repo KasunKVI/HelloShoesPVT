@@ -1,5 +1,6 @@
 package software.kasunkavinda.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class OrderEntity implements SuperEntity {
     private int points;
 
     @ManyToOne
+    @JsonManagedReference
     private CustomerEntity customer;
 
     @ManyToOne
@@ -34,12 +36,12 @@ public class OrderEntity implements SuperEntity {
     @ManyToOne
     private BranchEntity branch;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     private RefundEntity refund;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.MERGE)
     private List<Orders_Shoes> ordersShoes;
 
-    @OneToMany(mappedBy = "orders")
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.MERGE)
     private List<Orders_Accessories> accessories;
 }
