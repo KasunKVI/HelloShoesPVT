@@ -163,9 +163,6 @@ async function submitCustomerForm(customer, type) {
                     showConfirmButton: false,
                     timer: 1500
                 });
-
-                await refreshAccessToken();
-
             }
         } catch (error) {
             console.error("Request failed:", error);
@@ -203,8 +200,6 @@ async function submitCustomerForm(customer, type) {
                     showConfirmButton: false,
                     timer: 1500
                 });
-
-                await refreshAccessToken();
 
             }
 
@@ -381,6 +376,8 @@ const loadCustomers = () => {
 
             success: function (response) {
 
+                console.log(response);
+
 
                 response.map((customer, index) => {
 
@@ -411,11 +408,8 @@ const loadCustomers = () => {
                 attachEventListeners();
 
             },
-            error: async function (xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Something Error');
-
-                await refreshAccessToken();
-                await loadCustomers();
             }
         });
 
@@ -539,36 +533,9 @@ const attachEventListeners = () => {
     });
 };
 
-// Function to scroll to the specified element
-function scrollToElement(element) {
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
-}
 
-// Function to handle search action
-function handleSearch() {
-    const customerId = $('#search_input').val().trim(); // Trim whitespace from input
 
-    $('#customer_table_body tr').removeClass('highlighted'); // Remove highlight from previous search results
-
-    const row = $(`#customer_table_body tr[data-customer-id="${customerId}"]`);
-
-    if (row.length > 0) {
-        // Highlight the found row
-        row.addClass('highlighted');
-        scrollToElement(row[0]);
-    } else {
-        alert('Customer ID not found');
-    }
-}
-
-// Event listener for Enter key press on the input field
-$('#search_input').keypress(function (e) {
-    if (e.which === 13) {
-        handleSearch();
-    }
-});
-
-async function refreshAccessToken() {
+ async function refreshAccessToken() {
     try {
         const refreshToken = localStorage.getItem('refreshToken');
         const response = await $.ajax({

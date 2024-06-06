@@ -1,5 +1,7 @@
 package software.kasunkavinda.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,8 +44,8 @@ public class CustomerEntity implements SuperEntity{
     private String email;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    @JsonBackReference
     private List<OrderEntity> orders;
-
-
 
 }
