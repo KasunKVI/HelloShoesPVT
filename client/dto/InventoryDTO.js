@@ -1,76 +1,139 @@
 class InventoryDTO {
     constructor(invt_id, description, picture, qty, bought_price, sell_price, type, supplier_id) {
-        this._invt_id = invt_id;
-        this._description = description;
-        this._picture = picture;
-        this._qty = qty;
-        this._bought_price = bought_price;
-        this._sell_price = sell_price;
-        this._type = type;
-        this._supplier_id = supplier_id;
+        this.invt_id = invt_id;
+        this.description = description;
+        this.picture = picture;
+        this.qty = qty;
+        this.bought_price = bought_price;
+        this.sell_price = sell_price;
+        this.type = type;
+        this.supplier_id = supplier_id;
+    }
+    getInvt_id() {
+        return this.invt_id;
     }
 
-    get invt_id() {
-        return this._invt_id;
+    setInvt_id(invt_id) {
+        this.invt_id = invt_id;
     }
 
-    set invt_id(value) {
-        this._invt_id = value;
+    getDescription() {
+        return this.description;
     }
 
-    get description() {
-        return this._description;
+    setDescription(description) {
+        this.description = description;
     }
 
-    set description(value) {
-        this._description = value;
+    getPicture() {
+        return this.picture;
     }
 
-    get picture() {
-        return this._picture;
+    setPicture(picture) {
+        this.picture = picture;
     }
 
-    set picture(value) {
-        this._picture = value;
+    getQty() {
+        return this.qty;
     }
 
-    get qty() {
-        return this._qty;
+    setQty(qty) {
+        this.qty = qty;
     }
 
-    set qty(value) {
-        this._qty = value;
+    getBought_price() {
+        return this.bought_price;
     }
 
-    get bought_price() {
-        return this._bought_price;
+    setBought_price(bought_price) {
+        this.bought_price = bought_price;
     }
 
-    set bought_price(value) {
-        this._bought_price = value;
+    getSell_price() {
+        return this.sell_price;
     }
 
-    get sell_price() {
-        return this._sell_price;
+    setSell_price(sell_price) {
+        this.sell_price = sell_price;
     }
 
-    set sell_price(value) {
-        this._sell_price = value;
+    getType() {
+        return this.type;
     }
 
-    get type() {
-        return this._type;
+    setType(type) {
+        this.type = type;
     }
 
-    set type(value) {
-        this._type = value;
+    getSupplier_id() {
+        return this.supplier_id;
     }
 
-    get supplier_id() {
-        return this._supplier_id;
+    setSupplier_id(supplier_id) {
+        this.supplier_id = supplier_id;
     }
 
-    set supplier_id(value) {
-        this._supplier_id = value;
-    }
+    // get invt_id() {
+    //     return this.invt_id;
+    // }
+    //
+    // set invt_id(value) {
+    //     this.invt_id = value;
+    // }
+    //
+    // get description() {
+    //     return this.description;
+    // }
+    //
+    // set description(value) {
+    //     this.description = value;
+    // }
+    //
+    // get picture() {
+    //     return this.picture;
+    // }
+    //
+    // set picture(value) {
+    //     this.picture = value;
+    // }
+    //
+    // get qty() {
+    //     return this.qty;
+    // }
+    //
+    // set qty(value) {
+    //     this.qty = value;
+    // }
+    //
+    // get bought_price() {
+    //     return this.bought_price;
+    // }
+    //
+    // set bought_price(value) {
+    //     this.bought_price = value;
+    // }
+    //
+    // get sell_price() {
+    //     return this.sell_price;
+    // }
+    //
+    // set sell_price(value) {
+    //     this.sell_price = value;
+    // }
+    //
+    // get type() {
+    //     return this.type;
+    // }
+    //
+    // set type(value) {
+    //     this.type = value;
+    // }
+    //
+    // get supplier_id() {
+    //     return this.supplier_id;
+    // }
+    //
+    // set supplier_id(value) {
+    //     this.supplier_id = value;
+    // }
 }

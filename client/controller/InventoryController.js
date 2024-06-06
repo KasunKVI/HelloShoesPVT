@@ -639,7 +639,7 @@ function validateField(field, pattern) {
 }
 
 function validateNotEmpty(field) {
-    if (field.val().trim() !== '') {
+    if (field.val() !== '') {
         field.removeClass('is-invalid').addClass('is-valid');
         return true;
     } else {
@@ -649,7 +649,7 @@ function validateNotEmpty(field) {
 }
 
 function validateNumberField(field) {
-    const value = field.val().trim();
+    const value = field.val();
     if (!isNaN(value) && value !== '') {
         field.removeClass('is-invalid').addClass('is-valid');
         return true;
