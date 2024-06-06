@@ -8,4 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface EmailService {
 
     public String sendVerificationCode(String recipientEmail);
+    public void sendEmail(String to,String subject,String body);
 }
