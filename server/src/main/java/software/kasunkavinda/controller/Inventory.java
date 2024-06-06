@@ -33,6 +33,7 @@ public class Inventory {
     }
 
     @PostMapping("/save")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDTO> saveInventory(@RequestBody InventoryDTO inventoryDTO) {
         logger.info("Saving inventory item");
         try {

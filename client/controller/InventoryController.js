@@ -1029,3 +1029,56 @@ $('#shoe_size_update').on('change', function() {
 $('#shoe_qty_update').on('input', function() {
     validateNumberField($(this));
 });
+
+// Function to sort inventory by price
+function sortByPrice() {
+    const rows = $('#inventory_table_body tr').get();
+    rows.sort(function (a, b) {
+        const A = parseFloat($(a).find('.sell_price p').text());
+        const B = parseFloat($(b).find('.sell_price p').text());
+        return A - B;
+
+    });
+    $.each(rows, function (index, row) {
+        $('#inventory_table_body').append(row);
+    });
+}
+
+// Function to sort inventory by name (description)
+function sortByName() {
+    const rows = $('#inventory_table_body tr').get();
+    rows.sort(function (a, b) {
+        const A = $(a).find('.description p').text().toUpperCase();
+        const B = $(b).find('.description p').text().toUpperCase();
+        return (A < B) ? -1 : (A > B) ? 1 : 0;
+    });
+    $.each(rows, function (index, row) {
+        $('#inventory_table_body').append(row);
+    });
+}
+
+// Function to sort inventory by gender
+function sortByGender() {
+    const rows = $('#inventory_table_body tr').get();
+    rows.sort(function (a, b) {
+        const A = $(a).find('.description p').text().toUpperCase().includes("FOR MALE") ? 1 : 0;
+        const B = $(b).find('.description p').text().toUpperCase().includes("FOR MALE") ? 1 : 0;
+        return B - A;
+    });
+    $.each(rows, function (index, row) {
+        $('#inventory_table_body').append(row);
+    });
+}
+
+// Function to sort inventory by formality (casual or formal)
+function sortByFormality() {
+    const rows = $('#inventory_table_body tr').get();
+    rows.sort(function (a, b) {
+        const A = $(a).find('.description p').text().toUpperCase().includes("CASUAL") ? 1 : 0;
+        const B = $(b).find('.description p').text().toUpperCase().includes("CASUAL") ? 1 : 0;
+        return B - A;
+    });
+    $.each(rows, function (index, row) {
+        $('#inventory_table_body').append(row);
+    });
+}
