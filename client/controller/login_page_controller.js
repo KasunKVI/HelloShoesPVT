@@ -56,6 +56,8 @@ $("#login_btn").click(async function(event) {
                 $('#main_dashboard').fadeIn('slow');
                 $('#sidenav-main').fadeIn('slow');
                 $('#navbarBlur').fadeIn('slow');
+
+                loadOrders();
             });
         } catch (error) {
             console.error("Login failed:", error);
