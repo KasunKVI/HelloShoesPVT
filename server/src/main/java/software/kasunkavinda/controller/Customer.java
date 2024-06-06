@@ -33,6 +33,7 @@ public class Customer {
     }
 
     @PostMapping("/save")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDTO> saveCustomer(@RequestBody CustomerDTO customerDTO) {
         logger.info("Saving customer details");
         try {
