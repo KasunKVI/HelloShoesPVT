@@ -1,10 +1,7 @@
 package software.kasunkavinda.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +23,6 @@ public class RefundEntity implements SuperEntity{
     @ManyToOne
     private EmployeeEntity employee;
 
-    @ManyToOne
+    @OneToOne
     private OrderEntity order;
 }
