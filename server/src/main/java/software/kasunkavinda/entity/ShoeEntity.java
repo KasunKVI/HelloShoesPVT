@@ -31,7 +31,7 @@ public class ShoeEntity implements SuperEntity{
     @ManyToMany(mappedBy = "shoes", cascade = CascadeType.MERGE)
     private List<BranchEntity> branches;
 
-    @OneToMany(mappedBy = "shoeEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shoeEntity", cascade = CascadeType.MERGE)
     private List<Orders_Shoes> ordersShoes;
 
 

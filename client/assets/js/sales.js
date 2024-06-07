@@ -1,9 +1,10 @@
 async function fetchSalesData() {
 
   const accessToken = localStorage.getItem('accessToken');
+  const branchId = localStorage.getItem('branchId');
 
   try {
-    const response = await fetch('http://localhost:8081/helloShoesPVT/api/v1/order/sales', {
+    const response = await fetch('http://localhost:8081/helloShoesPVT/api/v1/order/sales/'+branchId, {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + accessToken,
@@ -14,10 +15,10 @@ async function fetchSalesData() {
     if (!response.ok) {
       throw new Error('Network response was not ok ' + response.statusText);
     }
-    console.log(response)
+
     const salesData = await response.json();
-    console.log(salesData)
     updateSalesChart(salesData);
+
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error);
   }
@@ -25,7 +26,7 @@ async function fetchSalesData() {
   try {
     const response = await $.ajax({
       type: "GET",
-      url: "http://localhost:8081/helloShoesPVT/api/v1/order/total-sales-balance",
+      url: "http://localhost:8081/helloShoesPVT/api/v1/order/total-sales-balance/" + branchId,
       headers: {
         "Authorization": "Bearer " + accessToken
       },
@@ -41,7 +42,7 @@ async function fetchSalesData() {
   try {
     const response = await $.ajax({
       type: "GET",
-      url: "http://localhost:8081/helloShoesPVT/api/v1/order/total-profit",
+      url: "http://localhost:8081/helloShoesPVT/api/v1/order/total-profit/"+branchId,
       headers: {
         "Authorization": "Bearer " + accessToken
       },

@@ -19,14 +19,14 @@ public interface OrderRepo extends JpaRepository<OrderEntity, String> {
     @Query("SELECT o FROM OrderEntity o WHERE o.branch.branch_id = :branchId")
     List<OrderEntity> findAllByBranchId(String branchId);
 
-    @Query("SELECT SUM(o.total) FROM OrderEntity o")
-    Double findTotalSalesBalance();
+    @Query("SELECT SUM(o.total) FROM OrderEntity o WHERE o.branch.branch_id = :branchId")
+    Double findTotalSalesBalance(String branchId);
 
-    @Query("SELECT SUM(o.total) FROM OrderEntity o WHERE FUNCTION('DATE', o.date) = :currentDate")
-    Double findTodaysSales(@Param("currentDate") Date currentDate);
+    @Query("SELECT SUM(o.total) FROM OrderEntity o WHERE FUNCTION('DATE', o.date) = :currentDate AND o.branch.branch_id = :branchId")
+    Double findTodaysSales(@Param("currentDate") Date currentDate, @Param("branchId") String branchId);
 
-    @Query("SELECT o.date, SUM(o.total) FROM OrderEntity o GROUP BY o.date ORDER BY o.date")
-    List<Object[]> findSalesData();
+    @Query("SELECT o.date, SUM(o.total) FROM OrderEntity o WHERE o.branch.branch_id = :branchId GROUP BY o.date ORDER BY o.date")
+    List<Object[]> findSalesDataByBranch(@Param("branchId") String branchId);
 
 
 }

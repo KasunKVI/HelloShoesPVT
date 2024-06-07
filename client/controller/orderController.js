@@ -35,6 +35,9 @@ $('#item_code_sales').on('input', async function () {
             InventoryDto.sell_price=response.sell_price;
             InventoryDto.qty = response.qty;
 
+
+
+
             // Populate the form fields with the retrieved Item details
             $("#itm_image_cart").attr('src', response.picture);
 
@@ -138,7 +141,10 @@ $("#add_to_cart_btn").click(async function (event) {
 
     if (validateAddToCart()) {
 
-        if (InventoryDto.qty < $('#item_qty_sales').val()) {
+        console.log(InventoryDto.qty);
+        let val = $('#item_qty_sales').val();
+        console.log(val)
+        if (InventoryDto.qty < val) {
 
             Swal.fire({
                 icon: "error",
@@ -376,7 +382,7 @@ $("#payment_btn").click( function(){
 });
 
 
-    $("#checkout_btn").click(async function (event){
+$("#checkout_btn").click(async function (event){
 
 
 
@@ -513,10 +519,10 @@ async function loadOrders(){
 
                 let tbl_row =
                     `<tr data-order-id=${order.order_id}> 
-                <td class="order_id"><p>${order.order_id}</p></td>
-                <td class="order_date"><p class="text-xs font-weight-bold mb-0">${formattedJoinedDate}</p></td>
-                <td class="order_budget"><p class="text-center  mb-0">${order.total}</p></td>
-                <td class="order_payment"><p class="text-center  mb-0">${payment}</p></td>
+                <td class="order-id"><p>${order.order_id}</p></td>
+                <td class="order-date"><p class="text-xs font-weight-bold mb-0">${formattedJoinedDate}</p></td>
+                <td class="order-budget"><p class="text-center  mb-0">${order.total}</p></td>
+                <td class="order-payment"><p class="text-center  mb-0">${payment}</p></td>
             
             <td class="text-center mb-0">
                         <div class="btn-reveal-trigger position-static align-middle">
@@ -538,7 +544,6 @@ async function loadOrders(){
 }
 
 function searchOrder(order_id) {
-
 }
 
 const attachEventListenersOrders = () => {
@@ -550,16 +555,22 @@ const attachEventListenersOrders = () => {
     $('.refund_btn').click(function (e) {
 
         e.preventDefault();
-        const orderRow = $(this).closest('tr');
-        const orderId = orderRow.data('order-id');
-        const orderDate = new Date(orderRow.data('order-date'));
+
+
         const currentDate = new Date();
+        const row = $(this).closest('tr');
+        const orderId = row.data('order-id');
+        const orderDate = row.find('.order-date p').text();
+        const orderDateS = new Date(orderDate);
+
 
         // Calculate the difference in days between the current date and the order date
-        const timeDifference = currentDate.getTime() - orderDate.getTime();
+        const timeDifference = currentDate.getTime() - orderDateS.getTime();
         const dayDifference = timeDifference / (1000 * 3600 * 24);
 
         const refund = new RefundDTO(orderId,currentDate,employeeId)
+
+        console.log(dayDifference)
 
         if (dayDifference > 3) {
             Swal.fire({

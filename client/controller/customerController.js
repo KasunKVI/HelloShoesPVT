@@ -153,6 +153,7 @@ async function submitCustomerForm(customer, type) {
                 });
                 loadCustomers();
                 clearCustomerAddForm();
+                 loadLabels()
 
                 $(".btn-close").click();
 
@@ -169,7 +170,7 @@ async function submitCustomerForm(customer, type) {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: error.responseJSON ? error.responseJSON.message : "Something went wrong. Please try again."
+                text: error.responseJSON ? error.responseJSON.message : "You Have No Access to add new Customer."
             });
         }
     }else {
@@ -193,6 +194,7 @@ async function submitCustomerForm(customer, type) {
                 });
                 loadCustomers();
                 await searchCustomer(customer.customer_id);
+                loadLabels();
             }else {
                 Swal.fire({
                     icon: "error",
@@ -364,7 +366,7 @@ const loadCustomers = () => {
     // Retrieve the access token from localStorage
     const accessToken = localStorage.getItem('accessToken');
 
-    $('#customer_table_body').empty();
+
 
     $.ajax({
             type:"GET",
@@ -378,6 +380,7 @@ const loadCustomers = () => {
 
                 console.log(response);
 
+                $('#customer_table_body').empty();
 
                 response.map((customer, index) => {
 
@@ -506,6 +509,7 @@ const attachEventListeners = () => {
 
                     loadCustomers();
                     clearCustomerUpdateForm();
+                    loadLabels();
 
                 } catch (error) {
                     console.error("Request failed:", error);

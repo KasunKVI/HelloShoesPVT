@@ -85,21 +85,22 @@ public class Order {
         }
     }
 
-    @GetMapping("/total-sales-balance")
-    public Double getTotalSalesBalance() {
-        return orderService.getTotalSalesBalance();
+
+    @GetMapping("/total-sales-balance/{branchId}")
+    public Double getTotalSalesBalance(@PathVariable String branchId) {
+        return orderService.getTotalSalesBalance(branchId);
     }
 
-    @GetMapping("/today-sales")
-    public Double getTotalSalesBalanceToday() {
-        return orderService.getTotalSalesBalanceToday();
+    @GetMapping("/today-sales/{branchId}")
+    public Double getTotalSalesBalanceToday(@PathVariable String branchId) {
+        return orderService.getTotalSalesBalanceToday(branchId);
     }
-    @GetMapping("/sales")
+    @GetMapping("/sales/{branchId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getSalesData() {
+    public ResponseEntity<Map<String, Object>> getSalesData(@PathVariable String branchId) {
         logger.info("Fetching sales data");
         try {
-            List<Object[]> salesData = orderService.getSalesData();
+            List<Object[]> salesData = orderService.getSalesData(branchId);
             Map<String, Object> response = new HashMap<>();
             response.put("dates", salesData.stream().map(data -> data[0]).toArray());
             response.put("totals", salesData.stream().map(data -> data[1]).toArray());
@@ -110,10 +111,10 @@ public class Order {
         }
     }
 
-    @GetMapping("/total-profit")
+    @GetMapping("/total-profit/{branchId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Double getTotalProfit() {
-        return orderService.calculateTotalProfit();
+    public Double getTotalProfit(@PathVariable String branchId) {
+        return orderService.calculateTotalProfit(branchId);
     }
 
     @GetMapping("/most-saled-item")

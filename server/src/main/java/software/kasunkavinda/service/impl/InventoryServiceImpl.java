@@ -94,13 +94,13 @@ public class InventoryServiceImpl implements InventoryService {
             if (!accessoriesRepo.existsById(itemId)) {
                 throw new NotFoundException("Accessory not found with ID: " + itemId);
             }
-            accessoriesRepo.deleteById(itemId);
+            accessoriesRepo.deleteAccessoryById(itemId);
             logger.info("Accessory item deleted: {}", itemId);
         } else {
             if (!shoeRepo.existsById(itemId)) {
                 throw new NotFoundException("Shoe not found with ID: " + itemId);
             }
-            shoeRepo.deleteById(itemId);
+            shoeRepo.deleteShoeById(itemId);
             logger.info("Shoe item deleted: {}", itemId);
         }
     }

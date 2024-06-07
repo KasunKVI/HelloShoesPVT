@@ -31,7 +31,8 @@ document.getElementById('shoe_gender_update').addEventListener('change', functio
 });
 
 // Clear form function
-function clearShoeAddForm() {
+function clearShoeAddForm(e) {
+
     // Clear image preview
     $('#shoe_preview').attr('src', '');
 
@@ -115,9 +116,11 @@ function loadInventoryTable(branchId) {
     const accessToken = localStorage.getItem('accessToken');
 
     let status;
-    $('#inventory_table_body').empty();
+
 
     $.ajax({
+        type: "GET",
+        url: "http://localhost:8081/helloShoesPVT/api/v1/inventory/all/" + branchId,
         contentType: "application/json",
         error: async function (xhr, status, error) {
             console.error('Error loading inventory:', error);
@@ -127,9 +130,10 @@ function loadInventoryTable(branchId) {
             "Authorization": "Bearer " + accessToken
         },
         success: function (response) {
-
-
+            $('#inventory_table_body').empty();
             response.map((inventoryItem, index) => {
+
+                console.log(inventoryItem);
 
                 if (inventoryItem.qty > 10) {
                     status = "Available"
@@ -174,8 +178,7 @@ function loadInventoryTable(branchId) {
 
         },
 
-        type: "GET",
-        url: "http://localhost:8081/helloShoesPVT/api/v1/inventory/all/" + branchId
+
     });
 }
 
@@ -297,7 +300,7 @@ const attachEventListenersInventory = () => {
 
         }else {
 
-            $('#updateModelSupplier').modal('show')
+            $('#updateModelShoe').modal('show')
 
             // Change the modal title to "Item Info"
             $("#popupModalLabelShoeUpdate").text("Item Info");
@@ -306,7 +309,6 @@ const attachEventListenersInventory = () => {
             $("#shoe_update_btn").hide();
 
             // Disable all input fields
-            $('#updateModelShoe').modal('show');
             $("#shoe_picture_update, #shoe_supplier_update, #shoe_bought_price_update,#shoe_selling_update,#shoe_gender_update,#shoe_Description, #shoe_size_update, #shoe_qty_update").prop("disabled", true);
 
         }
@@ -363,6 +365,7 @@ const attachEventListenersInventory = () => {
             });
 
         }else {
+            $('#updateModelShoe').modal('show')
 
             // Change the modal title to "Update Customer"
             $("#popupModalLabelShoeUpdate").text("Update Item");
@@ -550,6 +553,8 @@ async function submitInventoryForm(inventory, type) {
                 contentType: "application/json"
             });
 
+            console.log(response);
+
             // Assuming the response has a 'message' property
             if (response.message === "Item updated successfully") {
                 // Show a success message
@@ -615,7 +620,7 @@ $('#addNewShoeButton').click(function () {
 
 
 
-    $('#shoe_add_btn').click(function () {
+$('#shoe_add_btn').click(function () {
 
 
         if (validateShoeAddForm()) {
@@ -739,7 +744,7 @@ $('#shoe_update_btn').click(function () {
         const inventory = new InventoryDTO(
             itemId,
             $('#shoe_Description').val().trim()+" for "+$('#shoe_gender_update').val().trim(),
-            itemPic,
+            profilePicUpdateBase64,
             $('#shoe_qty_update').val().trim(),
             $('#shoe_bought_price_update').val().trim(),
             $('#shoe_selling_update').val().trim(),
@@ -881,7 +886,7 @@ $('#accessory_add_update').click(function () {
         const inventory = new InventoryDTO(
             itemId,
             $('#accessory_type_update').val().trim(),
-            itemPic,
+            profilePicUpdateBase64,
             $('#accessory_qty_update').val().trim(),
             $('#accessory_bought_price_update').val().trim(),
             $('#accessory_selling_update').val().trim(),

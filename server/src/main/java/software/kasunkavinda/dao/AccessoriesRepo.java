@@ -1,8 +1,10 @@
 package software.kasunkavinda.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import software.kasunkavinda.entity.AccessoriesEntity;
 import software.kasunkavinda.entity.ShoeEntity;
 
@@ -23,6 +25,11 @@ public interface AccessoriesRepo extends JpaRepository<AccessoriesEntity,String>
             "FROM AccessoriesEntity ae " +
             "INNER JOIN ae.ordersAccessories oa")
     List<Object[]> findOrderItemQtyAndBoughtPrice();
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM AccessoriesEntity s WHERE s.accessories_id = :accessoriesId")
+    void deleteAccessoryById(@Param("accessoriesId") String accessoriesId);
 
 
 }

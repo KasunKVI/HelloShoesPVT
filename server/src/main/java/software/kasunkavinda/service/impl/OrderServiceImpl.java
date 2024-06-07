@@ -118,30 +118,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Double getTotalSalesBalance() {
-        return orderRepo.findTotalSalesBalance();
+    public Double getTotalSalesBalance(String branchId){
+        return orderRepo.findTotalSalesBalance(branchId);
     }
 
     @Override
-    public Double getTotalSalesBalanceToday() {
+    public Double getTotalSalesBalanceToday(String branchId) {
         Date today = new Date();
-        return orderRepo.findTodaysSales(today);
+        return orderRepo.findTodaysSales(today, branchId);
     }
 
     @Override
-    public List<Object[]> getSalesData() {
-        return orderRepo.findSalesData();
+    public List<Object[]> getSalesData(String branchId) {
+        return orderRepo.findSalesDataByBranch(branchId);
     }
 
     @Override
-    public double calculateTotalProfit() {
+    public double calculateTotalProfit(String branchId) {
         // Step 1: Calculate Total Revenue (Total Sales)
-        Double totalRevenue = orderRepo.findTotalSalesBalance();
+        Double totalRevenue = orderRepo.findTotalSalesBalance(branchId);
 
         // Step 2: Calculate Total Cost of Goods Sold (COGS)
         double totalCostOfGoodsSold =calculateTotalCostOfGoodsSold();
 
-        System.out.println(totalCostOfGoodsSold);
         // Step 3: Calculate Total Profit
         return totalRevenue - totalCostOfGoodsSold;
     }

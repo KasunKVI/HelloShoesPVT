@@ -1,11 +1,14 @@
+let supplierChart;
+let customerChart;
 async function loadLabels() {
     // Retrieve the access token from localStorage
     const accessToken = localStorage.getItem('accessToken');
+    const branchId = localStorage.getItem('branchId');
 
     try {
         const response = await $.ajax({
             type: "GET",
-            url: "http://localhost:8081/helloShoesPVT/api/v1/order/total-sales-balance",
+            url: "http://localhost:8081/helloShoesPVT/api/v1/order/total-sales-balance/" + branchId,
             headers: {
                 "Authorization": "Bearer " + accessToken
             },
@@ -17,17 +20,13 @@ async function loadLabels() {
         document.getElementById('total_sales').innerText = `Rs. ${total.toLocaleString()}`;
     } catch (error) {
         console.error("Request failed:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Customer not found!",
-        });
+        console.error('There has been a problem with your fetch operation:', error);
 
     }
     try {
         const response = await $.ajax({
             type: "GET",
-            url: "http://localhost:8081/helloShoesPVT/api/v1/order/today-sales",
+            url: "http://localhost:8081/helloShoesPVT/api/v1/order/today-sales/"+branchId,
             headers: {
                 "Authorization": "Bearer " + accessToken
             },
@@ -40,11 +39,7 @@ async function loadLabels() {
         document.getElementById('today_sales').innerText = `Rs. ${total.toLocaleString()}`;
     } catch (error) {
         console.error("Request failed:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Customer not found!",
-        });
+        console.error('There has been a problem with your fetch operation:', error);
 
     }
 
@@ -88,7 +83,11 @@ async function loadLabels() {
 
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
-        new Chart(ctx, {
+        if (customerChart) {
+            customerChart.destroy(); // Destroy the previous chart instance
+        }
+
+        customerChart = new Chart(ctx, {
             type: "bar",
             data: {
                 labels: labels,
@@ -182,9 +181,14 @@ async function loadLabels() {
 
         const counts = response;
 
+
+
         const ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
 
-        new Chart(ctx3, {
+        if (supplierChart) {
+            supplierChart.destroy(); // Destroy the previous chart instance
+        }
+        supplierChart = new Chart(ctx3, {
             type: 'line',
             data: {
                 labels: ["International", "Local"],

@@ -34,10 +34,10 @@ public class BranchEntity implements SuperEntity {
     )
     private List<AccessoriesEntity> accessories;
 
-    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.MERGE)
     private List<OrderEntity> orders;
 
-    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.MERGE)
     private List<EmployeeEntity> employees;
 
 }

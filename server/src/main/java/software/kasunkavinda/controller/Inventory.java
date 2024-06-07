@@ -91,6 +91,7 @@ public class Inventory {
     @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDTO> updateInventory(@RequestBody InventoryDTO inventoryDTO) {
+        System.out.println(inventoryDTO.getPicture());
         logger.info("Updating inventory item");
         try {
             inventoryService.updateItem(inventoryDTO);

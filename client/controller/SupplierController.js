@@ -219,6 +219,7 @@ async function submitSupplierForm(supplier, type) {
                  loadSuppliers();
                  clearSupplierAddForm();
                 $(".btn-close").click();
+                loadLabels();
 
             } else {
                 Swal.fire({
@@ -259,6 +260,7 @@ async function submitSupplierForm(supplier, type) {
 
                 loadSuppliers();
                 $(".btn-close").click();
+                loadLabels();
 
             } else {
                 Swal.fire({
@@ -471,6 +473,7 @@ function attachEventListenerSupplier() {
 
                     loadSuppliers();
                     clearSupplierUpdateForm();
+                    loadLabels();
 
                 } catch (error) {
                     console.error("Request failed:", error);
@@ -502,7 +505,7 @@ function loadSuppliers() {
     // Retrieve the access token from localStorage
     const accessToken = localStorage.getItem('accessToken');
 
-    $('#supplier_table_body').empty();
+
 
     $.ajax({
         type:"GET",
@@ -516,6 +519,7 @@ function loadSuppliers() {
 
             console.log(response)
 
+            $('#supplier_table_body').empty();
 
             response.map((supplier, index) => {
 

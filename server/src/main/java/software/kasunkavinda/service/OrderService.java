@@ -10,10 +10,10 @@ public interface OrderService {
     String getLatestOrderId();
     List<OrderDTO> getAllOrder(String branchId);
     String saveOrder(OrderDTO order);
-    Double getTotalSalesBalance();
-    Double getTotalSalesBalanceToday();
-    List<Object[]> getSalesData();
-    double calculateTotalProfit();
+    Double getTotalSalesBalance(String branchId);
+    Double getTotalSalesBalanceToday(String branchId);
+    List<Object[]> getSalesData(String branchId);
+    double calculateTotalProfit(String branchId);
 
     MostSoldItemDTO getMostSaledItem();
 }

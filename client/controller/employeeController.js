@@ -15,7 +15,6 @@ const loadEmployees = () => {
     // Retrieve the access token from localStorage
     const accessToken = localStorage.getItem('accessToken');
 
-    $('#employee_table_body').empty();
 
     $.ajax({
         type:"GET",
@@ -28,7 +27,8 @@ const loadEmployees = () => {
 
         success: function (response) {
 
-            console.log(response)
+            $('#employee_table_body').empty();
+
 
             response.map((employee, index) => {
 
