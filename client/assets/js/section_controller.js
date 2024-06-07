@@ -9,6 +9,7 @@ $('#inventory_section').css('display','none');
 $('#sidenav-main').css('display','none');
 $('#navbarBlur').css('display','none');
 $('#login_section').css('display', 'none');
+$('#admin_panel').css('display', 'none');
 // $('#customer_add_form').css('display','none');
 $(document).ready(async function () {
     const refreshTokenLogin = localStorage.getItem('refreshToken');
@@ -28,6 +29,13 @@ $(document).ready(async function () {
 
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
+
+        // Store the branch name
+        const branchId = response.branchId;
+        localStorage.setItem('branchId', branchId);
+
+        const employeeId = response.employeeId;
+        localStorage.setItem('employeeId', employeeId);
 
         $('#login_section').css('display', 'none');
         $('#main_dashboard').fadeIn('slow');
@@ -59,6 +67,14 @@ window.onload = async function () {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
 
+        // Store the branch name
+        const branchId = response.branchId;
+        localStorage.setItem('branchId', branchId);
+
+        const employeeId = response.employeeId;
+        localStorage.setItem('employeeId', employeeId);
+
+
         $('#login_section').css('display', 'none');
         $('#main_dashboard').fadeIn('slow');
         $('#sidenav-main').fadeIn('slow');
@@ -80,6 +96,7 @@ var inventoryLink = document.getElementById("inventory_link");
 var profileLInk = document.getElementById("profile_link");
 var signInLink = document.getElementById("signIn_link");
 var signUpLink = document.getElementById("signUp_link");
+
 
 dashboardLink.classList.add("active");
 dashboardLink.classList.add("bg-gradient-primary");
@@ -121,6 +138,7 @@ function doHideSections(){
     $('#customer_section').css('display','none');
     $('#employee_section').css('display','none');
     $('#inventory_section').css('display','none');
+    $('#admin_panel').css('display','none');
 };
 
 dashboardLink.addEventListener("click", function(event) {
@@ -198,6 +216,7 @@ profileLInk.addEventListener("click",  function (event){
     doActivateLinks(profileLInk);
 
     doHideSections();
+    $('#admin_panel').css('display','block');
 
     secondLi.textContent = "Profile";
 
@@ -229,3 +248,4 @@ document.getElementById("add_customer_btn").addEventListener("click", function()
     var formContainer = document.getElementById("customer_add_form");
     formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
 });
+

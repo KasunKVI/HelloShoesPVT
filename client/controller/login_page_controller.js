@@ -58,6 +58,7 @@ $("#login_btn").click(async function(event) {
                 $('#navbarBlur').fadeIn('slow');
 
                 loadOrders();
+                loadLabels();
             });
         } catch (error) {
             console.error("Login failed:", error);
