@@ -86,6 +86,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .employee(employeeEntity)
                     .build();
             var savedUser = userRepo.save(buildUser);
+            employeeEntity.setUser(savedUser);
+            employeeRepo.save(employeeEntity);
+
             var genToken = jwtService.generateToken(savedUser);
 
             // Fetch branch information
