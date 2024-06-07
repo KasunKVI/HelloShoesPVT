@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.kasunkavinda.dao.*;
+import software.kasunkavinda.dto.MostSoldItemDTO;
 import software.kasunkavinda.dto.OrderDTO;
 import software.kasunkavinda.entity.*;
 import software.kasunkavinda.enums.Level;
@@ -14,6 +15,8 @@ import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.OrderService;
 import software.kasunkavinda.util.Mapping;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final Mapping mapper;
     private final ShoeRepo shoeRepo;
     private final AccessoriesRepo accessoriesRepo;
+
 
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
@@ -111,6 +115,86 @@ public class OrderServiceImpl implements OrderService {
             mapper.toOrderDTO(orderRepo.save(newOrder));
             return "Order placed successfully";
         }
+    }
+
+    @Override
+    public Double getTotalSalesBalance() {
+        return orderRepo.findTotalSalesBalance();
+    }
+
+    @Override
+    public Double getTotalSalesBalanceToday() {
+        Date today = new Date();
+        return orderRepo.findTodaysSales(today);
+    }
+
+    @Override
+    public List<Object[]> getSalesData() {
+        return orderRepo.findSalesData();
+    }
+
+    @Override
+    public double calculateTotalProfit() {
+        // Step 1: Calculate Total Revenue (Total Sales)
+        Double totalRevenue = orderRepo.findTotalSalesBalance();
+
+        // Step 2: Calculate Total Cost of Goods Sold (COGS)
+        double totalCostOfGoodsSold =calculateTotalCostOfGoodsSold();
+
+        System.out.println(totalCostOfGoodsSold);
+        // Step 3: Calculate Total Profit
+        return totalRevenue - totalCostOfGoodsSold;
+    }
+
+    @Override
+    public MostSoldItemDTO getMostSaledItem() {
+        List<Object[]> mostSaledShoe = shoeRepo.findMostSoldShoeAndQty();
+        List<Object[]> mostSaledAccessory = accessoriesRepo.findMostSoldAccessoryAndQty();
+
+        if (!mostSaledShoe.isEmpty() && mostSaledShoe.get(0)[1] != null) {
+            Object[] shoeData = mostSaledShoe.get(0);
+            MostSoldItemDTO shoeDTO = new MostSoldItemDTO();
+            shoeDTO.setDescription((String) shoeData[0]);
+            shoeDTO.setQuantity((Long) shoeData[2]);
+            // Set the picture from the shoeData array if available
+            shoeDTO.setPicture(shoeData.length > 2 ? (String) shoeData[1] : null);
+            return shoeDTO;
+        }
+
+        if (!mostSaledAccessory.isEmpty() && mostSaledAccessory.get(0)[1] != null) {
+            Object[] accessoryData = mostSaledAccessory.get(0);
+            MostSoldItemDTO accessoryDTO = new MostSoldItemDTO();
+            accessoryDTO.setDescription((String) accessoryData[0]);
+            accessoryDTO.setQuantity(Long.valueOf((Integer) accessoryData[2]));
+            // Set the picture from the accessoryData array if available
+            accessoryDTO.setPicture(accessoryData.length > 2 ? (String) accessoryData[1] : null);
+            return accessoryDTO;
+        }
+
+        // If both shoe and accessory lists are empty or contain no sold items
+        return null;
+    }
+
+    private double calculateTotalCostOfGoodsSold() {
+        double totalCostOfGoodsSold = 0;
+
+// Calculate cost for shoes
+        List<Object[]> ordersShoes = shoeRepo.findOrderShoeQtyAndBoughtPrice();
+        for (Object[] os : ordersShoes) {
+            int quantity = (int) os[0];
+            double boughtPrice = (double) os[1];
+            totalCostOfGoodsSold += quantity * boughtPrice;
+        }
+
+// Calculate cost for accessories
+        List<Object[]> ordersAccessories = accessoriesRepo.findMostSoldAccessoryAndQty();
+        for (Object[] oa : ordersAccessories) {
+            int quantity = (int) oa[1];
+            double boughtPrice = (double) oa[2];
+            totalCostOfGoodsSold += quantity * boughtPrice;
+        }
+
+        return totalCostOfGoodsSold;
     }
 
     private void setCustomerLevel(CustomerEntity customer) {

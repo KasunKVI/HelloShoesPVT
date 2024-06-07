@@ -13,4 +13,16 @@ public interface AccessoriesRepo extends JpaRepository<AccessoriesEntity,String>
     @Query("SELECT s FROM AccessoriesEntity s JOIN s.branches b WHERE b.branch_id = :branchId")
     List<AccessoriesEntity> findAllAccessoriesByBranchId(@Param("branchId") String branchId);
 
+    @Query("SELECT a.description, a.picture, SUM(oa.quantity) " +
+            "FROM Orders_Accessories oa JOIN oa.accessoriesEntity a " +
+            "GROUP BY a.description, a.picture " +
+            "ORDER BY SUM(oa.quantity) DESC")
+    List<Object[]> findMostSoldAccessoryAndQty();
+
+    @Query("SELECT oa.quantity, ae.bought_price " +
+            "FROM AccessoriesEntity ae " +
+            "INNER JOIN ae.ordersAccessories oa")
+    List<Object[]> findOrderItemQtyAndBoughtPrice();
+
+
 }

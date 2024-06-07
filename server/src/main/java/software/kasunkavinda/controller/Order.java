@@ -6,11 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import software.kasunkavinda.dto.MostSoldItemDTO;
 import software.kasunkavinda.dto.OrderDTO;
 import software.kasunkavinda.dto.ResponseDTO;
 import software.kasunkavinda.service.OrderService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/order")
@@ -80,4 +83,47 @@ public class Order {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/total-sales-balance")
+    public Double getTotalSalesBalance() {
+        return orderService.getTotalSalesBalance();
+    }
+
+    @GetMapping("/today-sales")
+    public Double getTotalSalesBalanceToday() {
+        return orderService.getTotalSalesBalanceToday();
+    }
+    @GetMapping("/sales")
+    public ResponseEntity<Map<String, Object>> getSalesData() {
+        logger.info("Fetching sales data");
+        try {
+            List<Object[]> salesData = orderService.getSalesData();
+            Map<String, Object> response = new HashMap<>();
+            response.put("dates", salesData.stream().map(data -> data[0]).toArray());
+            response.put("totals", salesData.stream().map(data -> data[1]).toArray());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error fetching sales data", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/total-profit")
+    public Double getTotalProfit() {
+        return orderService.calculateTotalProfit();
+    }
+
+    @GetMapping("/most-saled-item")
+    public ResponseEntity<?> getMostSaledItem() {
+        logger.info("Fetching most saled item");
+        try {
+            MostSoldItemDTO mostSaledItem = orderService.getMostSaledItem();
+            return ResponseEntity.ok(mostSaledItem);
+        } catch (Exception e) {
+            logger.error("Error fetching most saled item", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error | Unable to fetch most saled item.\nMore Details\n" + e);
+        }
+    }
+
 }
