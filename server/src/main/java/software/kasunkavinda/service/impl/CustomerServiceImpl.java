@@ -14,6 +14,7 @@ import software.kasunkavinda.exception.QuantityExceededException;
 import software.kasunkavinda.service.CustomerService;
 import software.kasunkavinda.util.Mapping;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,5 +95,16 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepo.save(updateCustomer);
         logger.info("Customer updated successfully: {}", customerDTO.getCustomer_id());
         return "Customer updated successfully";
+    }
+
+    @Override
+    public Long getTodayCustomers() {
+        Date today = new Date();
+        return customerRepo.countCustomersJoinedToday(today);
+    }
+
+    @Override
+    public List<Object[]> getWeeklyCustomers() {
+        return customerRepo.countWeeklyCustomers();
     }
 }

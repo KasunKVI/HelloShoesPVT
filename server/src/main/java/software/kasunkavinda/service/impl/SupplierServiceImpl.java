@@ -117,4 +117,14 @@ public class SupplierServiceImpl implements SupplierService {
         logger.info("Fetched all supplier IDs, total count: {}", supplierIds.size());
         return supplierIds;
     }
+
+    @Override
+    public Long getInternationalSuppliersCount() {
+        return supplierRepo.countInternationalSuppliers();
+    }
+
+    @Override
+    public Long getLocalSuppliersCount() {
+        return supplierRepo.countLocalSuppliers();
+    }
 }

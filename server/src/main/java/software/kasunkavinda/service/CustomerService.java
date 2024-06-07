@@ -3,6 +3,7 @@ package software.kasunkavinda.service;
 import software.kasunkavinda.dto.CustomerDTO;
 import software.kasunkavinda.entity.CustomerEntity;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +14,7 @@ public interface CustomerService {
     CustomerDTO getSelectedCustomer(String customerId);
     List<CustomerDTO> getAllCustomers();
     String updateCustomer(CustomerDTO customerDTO);
+    Long getTodayCustomers();
+    List<Object[]> getWeeklyCustomers();
 
 }

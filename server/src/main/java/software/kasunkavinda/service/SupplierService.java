@@ -14,6 +14,8 @@ public interface SupplierService {
     String updateSupplier(SupplierDTO supplierDTO);
     String getLatestSupplierId();
     List<String> getAllSupplierIds();
+    Long getInternationalSuppliersCount();
+    Long getLocalSuppliersCount();
 
 
 }

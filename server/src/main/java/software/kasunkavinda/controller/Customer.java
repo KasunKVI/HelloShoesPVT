@@ -137,4 +137,24 @@ public class Customer {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/get-today-count")
+    public ResponseEntity<Long> getTodayCustomers() {
+        logger.info("Fetching customer details");
+        Long todayCustomers = customerService.getTodayCustomers();
+        return new ResponseEntity<>(todayCustomers, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-weekly-count")
+    public ResponseEntity<List<Object[]>> getWeeklyCustomers() {
+        logger.info("Fetching weekly customer count");
+        try {
+            List<Object[]> count = customerService.getWeeklyCustomers();
+            return new ResponseEntity<>(count, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error fetching weekly customer count", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+

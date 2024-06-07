@@ -15,7 +15,9 @@ import software.kasunkavinda.entity.SuperEntity;
 import software.kasunkavinda.entity.SupplierEntity;
 import software.kasunkavinda.service.SupplierService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -164,6 +166,20 @@ public class Supplier  {
             responseDTO.setMessage("Internal server error");
             responseDTO.setContent(exception.getMessage());
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/count-by-category")
+    public ResponseEntity<Map<String, Long>> getSuppliersCount() {
+        logger.info("Fetching suppliers count");
+        try {
+            Map<String, Long> counts = new HashMap<>();
+            counts.put("international", supplierService.getInternationalSuppliersCount());
+            counts.put("local", supplierService.getLocalSuppliersCount());
+            return new ResponseEntity<>(counts, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error fetching suppliers count", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

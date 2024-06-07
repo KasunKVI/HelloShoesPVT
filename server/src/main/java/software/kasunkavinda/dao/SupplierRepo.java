@@ -13,4 +13,10 @@ public interface SupplierRepo extends JpaRepository<SupplierEntity, String> {
 
     boolean existsByEmail(String email);
 
+    @Query("SELECT COUNT(s) FROM SupplierEntity s WHERE s.category = 'INTERNATIONAL'")
+    Long countInternationalSuppliers();
+
+    @Query("SELECT COUNT(s) FROM SupplierEntity s WHERE s.category = 'LOCAL'")
+    Long countLocalSuppliers();
+
 }
