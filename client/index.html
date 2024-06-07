@@ -21,9 +21,7 @@
     <link rel="stylesheet" href="assets/css/inputValidation.css">
     <link rel="stylesheet" href="assets/css/paymentStyle.css">
 </head>
-<body>
-
-
+<body class="g-sidenav-show  bg-gray-200">
 <section id="login_section">
     <section class="h-100 gradient-form" style="background-color: #eee;">
         <div class="container py-5 h-100">
@@ -156,7 +154,8 @@
         </div>
     </section>
 </section>
-    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
+
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" id="sidenav-main">
         <div class="sidenav-header">
             <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
             <a class="navbar-brand m-0" href="" target="_blank">
@@ -210,7 +209,7 @@
                 <li class="nav-item">
                     <a id="profile_link" class="nav-link text-white ">
                             <i class="material-icons opacity-10">person</i>
-                        <span class="nav-link-text ms-1">Profile</span>
+                        <span class="nav-link-text ms-1">Admin Panel</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -366,7 +365,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Today's Sales</p>
-                                <h4 class="mb-0">$53k</h4>
+                                <h4 class="mb-0" id="today_sales">0</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -383,7 +382,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Today's Customers</p>
-                                <h4 class="mb-0">2,300</h4>
+                                <h4 class="mb-0" id="today_customers">0</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -399,13 +398,13 @@
                                 <i class="material-icons opacity-10">person</i>
                             </div>
                             <div class="text-end pt-1">
-                                <p class="text-sm mb-0 text-capitalize">New Employees</p>
-                                <h4 class="mb-0">3,462</h4>
+                                <p class="text-sm mb-0 text-capitalize">Total Employees</p>
+                                <h4 class="mb-0">8</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
                         <div class="card-footer p-3">
-                            <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
+                            <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">2%</span> than yesterday</p>
                         </div>
                     </div>
                 </div>
@@ -417,7 +416,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Total Sales</p>
-                                <h4 class="mb-0">$103,430</h4>
+                                <h4 class="mb-0" id="total_sales">0</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -428,7 +427,7 @@
                 </div>
             </div>
             <div class="row mt-4">
-                <div class="col-lg-4 col-md-6 mt-4 mb-4">
+                <div class="col-lg-6 col-md-6 mt-4 mb-4">
                     <div class="card z-index-2 ">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                             <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
@@ -438,7 +437,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h6 class="mb-0 ">Website Views</h6>
+                            <h6 class="mb-0 ">Daily Customers</h6>
                             <p class="text-sm ">Last Campaign Performance</p>
                             <hr class="dark horizontal">
                             <div class="d-flex ">
@@ -448,27 +447,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 mt-4 mb-4">
-                    <div class="card z-index-2  ">
-                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                            <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
-                                <div class="chart">
-                                    <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="mb-0 "> Daily Sales </h6>
-                            <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales. </p>
-                            <hr class="dark horizontal">
-                            <div class="d-flex ">
-                                <i class="material-icons text-sm my-auto me-1">schedule</i>
-                                <p class="mb-0 text-sm"> updated 4 min ago </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mt-4 mb-3">
+
+                <div class="col-lg-6 col-md-6 mt-4 mb-3">
                     <div class="card z-index-2 ">
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                             <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
@@ -478,7 +458,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h6 class="mb-0 ">Completed Tasks</h6>
+                            <h6 class="mb-0 ">Suppliers Count</h6>
                             <p class="text-sm ">Last Campaign Performance</p>
                             <hr class="dark horizontal">
                             <div class="d-flex ">
@@ -551,7 +531,7 @@
                     <i class="material-icons text-success text-gradient">notifications</i>
                   </span>
                                     <div class="timeline-content">
-                                        <h6 class="text-dark text-sm font-weight-bold mb-0">$2400, Design changes</h6>
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">RS. 240000, Design changes</h6>
                                         <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">22 DEC 7:20 PM</p>
                                     </div>
                                 </div>
@@ -651,98 +631,6 @@
 </section>
 <section id="sales_section">
  <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-8 d-flex align-items-strech">
-            <div class="card w-100">
-                <div class="card-body">
-                    <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
-                        <div class="mb-3 mb-sm-0">
-                            <h5 class="card-title fw-semibold">Sales Overview</h5>
-                        </div>
-                        <div>
-                            <select class="form-select">
-                                <option value="1">March 2023</option>
-                                <option value="2">April 2023</option>
-                                <option value="3">May 2023</option>
-                                <option value="4">June 2023</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="chart"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Yearly Breakup -->
-                    <div class="card overflow-hidden">
-                        <div class="card-body p-4">
-                            <h5 class="card-title mb-9 fw-semibold">Yearly Breakup</h5>
-                            <div class="row align-items-center">
-                                <div class="col-8">
-                                    <h4 class="fw-semibold mb-3">$36,358</h4>
-                                    <div class="d-flex align-items-center mb-3">
-                          <span
-                                  class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                            <i class="ti ti-arrow-up-left text-success"></i>
-                          </span>
-                                        <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                                        <p class="fs-3 mb-0">last year</p>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-4">
-                                            <span class="round-8 bg-primary rounded-circle me-2 d-inline-block"></span>
-                                            <span class="fs-2">2023</span>
-                                        </div>
-                                        <div>
-                                            <span class="round-8 bg-light-primary rounded-circle me-2 d-inline-block"></span>
-                                            <span class="fs-2">2023</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="d-flex justify-content-center">
-                                        <div id="breakup"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <!-- Monthly Earnings -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row alig n-items-start">
-                                <div class="col-8">
-                                    <h5 class="card-title mb-9 fw-semibold"> Monthly Earnings </h5>
-                                    <h4 class="fw-semibold mb-3">$6,820</h4>
-                                    <div class="d-flex align-items-center pb-1">
-                          <span
-                                  class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center">
-                            <i class="ti ti-arrow-down-right text-danger"></i>
-                          </span>
-                                        <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                                        <p class="fs-3 mb-0">last year</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="d-flex justify-content-end">
-                                        <div
-                                                class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center">
-                                            <i class="ti ti-currency-dollar fs-6"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="earning"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-lg-4 d-flex">
             <div class="card w-100">
@@ -1181,7 +1069,137 @@
             </div>
         </div>
 </section>
+<section id="admin_panel">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 d-flex align-items-strech">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
+                            <div class="mb-3 mb-sm-0">
+                                <h5 class="card-title fw-semibold">Sales Overview</h5>
+                            </div>
+                        </div>
+                        <div id="salesChart"></div>
+                        <div class="mt-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Total Sales</h6>
+                                            <h5 class="card-title fw-bold" id="totalSales">Loading...</h5>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Total Profit</h6>
+                                            <h5 class="card-title fw-bold" id="totalProfit">Loading...</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">The Most Sale Item</h6>
+                                            <h5 class="card-title fw-bold" id="mostSaleItem">Loading...</h5>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">The Most Sale Item Qty</h6>
+                                            <h5 class="card-title fw-bold" id="mostSaleItemQty">Loading...</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <img id="pictureOfMostSaleItem" class="card-img-top" src="" alt="Picture of the most sale item">
+                                        <div class="card-body">
+                                            <h5 class="card-title">The Most Sale Item</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- Yearly Breakup -->
+                        <div class="card overflow-hidden">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-9 fw-semibold">Yearly Breakup</h5>
+                                <div class="row align-items-center">
+                                    <div class="col-8">
+                                        <h4 class="fw-semibold mb-3" >RS. 36,35800</h4>
+                                        <div class="d-flex align-items-center mb-3">
+                          <span
+                                  class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
+                            <i class="ti ti-arrow-up-left text-success"></i>
+                          </span>
+                                            <p class="text-dark me-1 fs-3 mb-0">+9%</p>
+                                            <p class="fs-3 mb-0">last year</p>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-4">
+                                                <span class="round-8 bg-primary rounded-circle me-2 d-inline-block"></span>
+                                                <span class="fs-2">2023</span>
+                                            </div>
+                                            <div>
+                                                <span class="round-8 bg-light-primary rounded-circle me-2 d-inline-block"></span>
+                                                <span class="fs-2">2023</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="d-flex justify-content-center">
+                                            <div id="breakup"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <!-- Monthly Earnings -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row alig n-items-start">
+                                    <div class="col-8">
+                                        <h5 class="card-title mb-9 fw-semibold"> Monthly Earnings </h5>
+                                        <h4 class="fw-semibold mb-3">RS. 6,82000</h4>
+                                        <div class="d-flex align-items-center pb-1">
+                          <span
+                                  class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center">
+                            <i class="ti ti-arrow-down-right text-danger"></i>
+                          </span>
+                                            <p class="text-dark me-1 fs-3 mb-0">+9%</p>
+                                            <p class="fs-3 mb-0">last year</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="d-flex justify-content-end">
+                                            <div
+                                                    class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center">
+                                                <i class="ti ti-currency-dollar fs-6"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="earning"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+</section>
 </main>
 
 <div class="modal fade" id="addModelCustomer" tabindex="-1" role="dialog" aria-labelledby="popupModalLabelCustomer" aria-hidden="true">
@@ -2049,6 +2067,7 @@
 <script src="/dto/SupplierDTO.js"></script>
 <script src="/dto/OrderDTO.js"></script>
 <script src="/dto/RefundDTO.js"></script>
+<script src="/controller/dashboardController.js"></script>
 <script src="/controller/customerController.js"></script>
 <script src="/controller/employeeController.js"></script>
 <script src="/controller/InventoryController.js"></script>
@@ -2056,254 +2075,6 @@
 <script src="/controller/orderController.js"></script>
 <script src="/controller/tableScroller.js"></script>
 
-
-<script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
-
-    new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["M", "T", "W", "T", "F", "S", "S"],
-            datasets: [{
-                label: "Sales",
-                tension: 0.4,
-                borderWidth: 0,
-                borderRadius: 4,
-                borderSkipped: false,
-                backgroundColor: "rgba(255, 255, 255, .8)",
-                data: [50, 20, 10, 22, 50, 10, 40],
-                maxBarThickness: 6
-            }, ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 500,
-                        beginAtZero: true,
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                        color: "#fff"
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
-    new Chart(ctx2, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Mobile apps",
-                tension: 0,
-                borderWidth: 0,
-                pointRadius: 5,
-                pointBackgroundColor: "rgba(255, 255, 255, .8)",
-                pointBorderColor: "transparent",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderWidth: 4,
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
-
-    new Chart(ctx3, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Mobile apps",
-                tension: 0,
-                borderWidth: 0,
-                pointRadius: 5,
-                pointBackgroundColor: "rgba(255, 255, 255, .8)",
-                pointBorderColor: "transparent",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderWidth: 4,
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        padding: 10,
-                        color: '#f8f9fa',
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-</script>
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
